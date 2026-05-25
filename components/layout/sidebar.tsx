@@ -10,7 +10,7 @@ export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="sticky top-16 hidden h-[calc(100vh-4rem)] w-64 shrink-0 border-r border-border/50 lg:block">
+    <aside className="sticky top-24 hidden h-[calc(100vh-6.5rem)] w-64 shrink-0 border-r border-border/50 lg:block">
       <ScrollArea className="h-full py-6 pl-4 pr-2">
         <nav className="space-y-1">
           <p className="mb-3 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
