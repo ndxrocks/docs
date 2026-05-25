@@ -1,7 +1,7 @@
 import { CodeBlock } from "@/components/docs/code-block";
 import Link from "next/link";
 
-const installCode = `pip install kern`;
+const installCode = `pip install kern-ai`;
 
 const quickStartCode = `from kern import Agent
 from kern.models.openai import OpenAIChat

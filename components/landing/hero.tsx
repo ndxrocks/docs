@@ -33,7 +33,7 @@ function TerminalAnimation() {
           <span>$</span>
           {step >= 0 && (
             <span className="inline-block relative">
-               pip install kern
+               pip install kern-ai
                {step === 0 && <span className="absolute -right-2 top-0 bottom-0 w-2 bg-zinc-300 animate-pulse"></span>}
             </span>
           )}
@@ -143,7 +143,7 @@ export function Hero() {
         <div className="mx-auto mt-16 max-w-4xl">
           {/* Mobile: simple install command */}
           <div className="md:hidden rounded-lg border border-border/50 bg-[#0D0D14] px-4 py-3 font-mono text-sm text-zinc-300">
-            <span className="text-kern-light">$</span> pip install kern
+            <span className="text-kern-light">$</span> pip install kern-ai
           </div>
           {/* md+: full terminal + code block */}
           <div className="hidden md:grid gap-4 lg:grid-cols-[1fr_2fr]">
