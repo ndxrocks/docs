@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
 
 const stats = [
   { value: "43+", label: "Model Providers", desc: "Native support for local and API-based models" },
@@ -13,40 +12,15 @@ const stats = [
 ];
 
 export function Stats() {
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const cardVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" as const },
-    },
-  };
-
   return (
-    <section className="relative border-t border-b border-white/5 py-16 md:py-20 overflow-hidden bg-black/40 backdrop-blur-[2px]">
+    <section className="relative border-t border-b border-white/5 py-16 md:py-20 overflow-hidden bg-black/40">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {stats.map((stat, i) => (
-            <motion.div
+            <div
               key={stat.label}
-              variants={cardVariants}
-              whileHover={{ y: -4, borderColor: "rgba(126, 65, 248, 0.2)" }}
-              className="group relative flex flex-col justify-between rounded-xl border border-white/5 bg-white/[0.01] p-6 transition-colors hover:bg-kern/[0.02]"
+              className="group relative flex flex-col justify-between rounded-xl border border-white/5 bg-white/[0.01] p-6 transition-all duration-300 hover:bg-kern/[0.02] hover:-translate-y-1 hover:border-kern/20 animate-fade-up"
+              style={{ animationDelay: `${i * 100}ms` }}
             >
               <div>
                 <span className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gradient block mb-1">
@@ -62,9 +36,9 @@ export function Stats() {
               
               {/* Subtle accent line on hover */}
               <div className="absolute bottom-0 left-6 right-6 h-[2px] bg-gradient-to-r from-transparent via-kern-light/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

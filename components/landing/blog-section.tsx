@@ -3,31 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, Calendar, Clock } from "lucide-react";
-import { motion } from "framer-motion";
 import { posts } from "@/lib/blog-data";
 
 export function BlogSection() {
   // Use the first post as featured, and the next 2-3 as secondary
   const featuredPost = posts[0];
   const secondaryPosts = posts.slice(1, 4);
-
-  const containerVariants = {
-    hidden: {},
-    visible: {
-      transition: {
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: "easeOut" as const },
-    },
-  };
 
   return (
     <section className="relative border-t border-white/5 px-4 py-24 sm:px-6 lg:px-8 overflow-hidden bg-black/20">
@@ -58,17 +39,10 @@ export function BlogSection() {
         </div>
 
         {/* Blog Posts Grid */}
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Featured Post Card */}
-          <motion.div
-            variants={itemVariants}
-            className="lg:col-span-2 flex flex-col group relative rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden hover:border-kern/20 transition-all hover:bg-kern/[0.01]"
+          <div
+            className="lg:col-span-2 flex flex-col group relative rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden hover:border-kern/20 transition-all hover:bg-kern/[0.01] animate-fade-up"
           >
             <Link href={`/blog/${featuredPost.slug}`} className="flex flex-col h-full">
               {/* Cover Image Container */}
@@ -114,15 +88,15 @@ export function BlogSection() {
                 </div>
               </div>
             </Link>
-          </motion.div>
+          </div>
 
           {/* Secondary Posts List */}
           <div className="flex flex-col gap-6">
-            {secondaryPosts.map((post) => (
-              <motion.div
+            {secondaryPosts.map((post, i) => (
+              <div
                 key={post.slug}
-                variants={itemVariants}
-                className="group relative flex flex-col justify-between rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden hover:border-kern/20 transition-all hover:bg-kern/[0.01]"
+                className="group relative flex flex-col justify-between rounded-2xl border border-white/5 bg-white/[0.01] overflow-hidden hover:border-kern/20 transition-all hover:bg-kern/[0.01] animate-fade-up"
+                style={{ animationDelay: `${(i + 1) * 150}ms` }}
               >
                 <Link href={`/blog/${post.slug}`} className="p-6 flex flex-col h-full justify-between">
                   <div>
@@ -149,10 +123,10 @@ export function BlogSection() {
                     <ArrowRight className="h-3 w-3 group-hover:translate-x-1 transition-transform" />
                   </div>
                 </Link>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

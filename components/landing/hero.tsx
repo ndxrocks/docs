@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 
 function CodeEditor() {
   return (
-    <div className="flex-1 p-4 font-mono text-[11px] sm:text-xs overflow-y-auto bg-[#1a1b26] text-[#a9b1d6] border-b border-black/30 select-none leading-relaxed min-h-[220px] whitespace-pre">
+    <div className="flex-1 p-4 font-mono text-[11px] sm:text-xs bg-[#1a1b26] text-[#a9b1d6] border-b border-black/30 select-none leading-relaxed min-h-[220px] whitespace-pre overflow-hidden">
       <div>
         <span className="text-[#565f89] mr-4 inline-block text-right w-4 select-none">1</span>
         <span className="text-[#bb9af7]">from</span> pydantic <span className="text-[#bb9af7]">import</span> BaseModel, Field
@@ -91,7 +91,7 @@ function TerminalPanel() {
       </div>
       
       {/* Terminal console */}
-      <div className="p-4 flex-grow overflow-y-auto flex flex-col gap-1.5 text-[#a9b1d6] scrollbar-none">
+      <div className="p-4 flex-grow flex flex-col gap-1.5 text-[#a9b1d6] overflow-hidden">
         <div className="flex items-center gap-1.5">
           <span className="text-[#9ece6a]">~</span>
           <span className="text-[#2ac3de]">$</span>
