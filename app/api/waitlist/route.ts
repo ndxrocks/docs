@@ -17,7 +17,10 @@ export async function POST(request: Request) {
     // Fallback for local development if Resend keys are not set
     if (!process.env.RESEND_API_KEY || !AUDIENCE_ID) {
       console.log(`[Waitlist Local] Would have added ${email} to audience`);
-      return NextResponse.json({ message: "Added to waitlist (Local Mode)" }, { status: 201 });
+      return NextResponse.json(
+        { message: "Added to waitlist (Local Mode)" },
+        { status: 201 },
+      );
     }
 
     // Add contact to Resend Audience
@@ -29,7 +32,10 @@ export async function POST(request: Request) {
     if (error) {
       console.error("[Waitlist Error]", error);
       // If they are already subscribed, Resend might throw an error, we can just treat it as a success for the user to prevent enumeration
-      return NextResponse.json({ message: "Already registered or error" }, { status: 200 });
+      return NextResponse.json(
+        { message: "Already registered or error" },
+        { status: 200 },
+      );
     }
 
     console.log(`[Waitlist] ${email} successfully joined the waitlist!`);
@@ -37,6 +43,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: "Added to waitlist" }, { status: 201 });
   } catch (error) {
     console.error("[Waitlist Error]", error);
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
 }
