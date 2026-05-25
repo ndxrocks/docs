@@ -26,8 +26,8 @@ export function Footer() {
   return (
     <footer className="border-t border-white/5 bg-[#060608]">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
-          <div className="col-span-2 md:col-span-1">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-4">
+          <div className="sm:col-span-2 md:col-span-1">
             <Link href="/" className="flex items-center gap-3">
               <Image
                 src="/logos/kern-light.png"

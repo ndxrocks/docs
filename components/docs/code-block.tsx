@@ -30,7 +30,7 @@ export function CodeBlock({
   const lines = code.trim().split("\n");
 
   return (
-    <div className={cn("group relative overflow-hidden rounded-lg border border-border/50 bg-[#0D0D14]", className)}>
+    <div className={cn("group relative max-w-full overflow-x-auto rounded-lg border border-border/50 bg-[#0D0D14]", className)}>
       {filename && (
         <div className="flex items-center justify-between border-b border-border/30 bg-[#0A0A10] px-4 py-2">
           <span className="text-xs font-medium text-muted-foreground">{filename}</span>

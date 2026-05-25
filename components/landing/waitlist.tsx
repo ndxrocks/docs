@@ -70,7 +70,7 @@ export function Waitlist() {
               </p>
             </div>
           ) : (
-            <form onSubmit={onSubmit} className="flex gap-2">
+            <form onSubmit={onSubmit} className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1">
                 <Input
                   type="email"

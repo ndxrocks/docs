@@ -53,8 +53,8 @@ export function Comparison() {
           </p>
         </div>
 
-        <div className="mt-12 overflow-hidden rounded-xl border border-white/5 bg-white/[0.02]">
-          <table className="w-full text-sm">
+        <div className="mt-12 overflow-x-auto rounded-xl border border-white/5 bg-white/[0.02]">
+          <table className="w-full min-w-[500px] text-sm">
             <thead>
               <tr className="border-b border-white/5">
                 <th className="px-5 py-4 text-left text-sm font-medium text-zinc-400">Feature</th>

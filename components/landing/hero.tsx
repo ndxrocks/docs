@@ -18,7 +18,7 @@ function TerminalAnimation() {
   }, []);
 
   return (
-    <div className="rounded-xl border border-border/50 bg-[#09090b] shadow-2xl text-left overflow-hidden h-full flex flex-col font-mono text-sm">
+    <div className="min-w-0 rounded-xl border border-border/50 bg-[#09090b] shadow-2xl text-left overflow-hidden h-full flex flex-col font-mono text-sm">
       <div className="flex items-center gap-2 border-b border-border/50 bg-muted/20 px-4 py-3">
         <div className="flex gap-1.5">
           <div className="size-3 rounded-full bg-red-500/80" />
@@ -27,7 +27,7 @@ function TerminalAnimation() {
         </div>
         <div className="ml-4 text-xs text-muted-foreground">Terminal</div>
       </div>
-      <div className="p-4 flex-1 text-zinc-300 flex flex-col gap-2">
+      <div className="p-4 flex-1 text-zinc-300 flex flex-col gap-2 overflow-x-auto">
         <div className="flex items-center gap-2">
           <span className="text-kern-light">~</span>
           <span>$</span>
@@ -39,15 +39,15 @@ function TerminalAnimation() {
           )}
         </div>
         {step >= 1 && (
-          <div className="text-zinc-500">
+          <div className="text-zinc-500 whitespace-nowrap">
             Collecting kern...
           </div>
         )}
         {step >= 2 && (
-          <div className="text-zinc-500">
+          <div className="text-zinc-500 whitespace-nowrap">
             Downloading kern-0.1.0-py3-none-any.whl (42 kB)
             <br />
-            <span className="text-green-500">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> 42/42 kB 2.1 MB/s
+            <span className="text-green-500">━━━━━━━━━━━━━━━━━━━━</span> 42/42 kB 2.1 MB/s
           </div>
         )}
         {step >= 3 && (
@@ -139,9 +139,14 @@ export function Hero() {
           </div>
         </div>
 
-        {/* Code examples */}
-        <div className="mx-auto mt-20 max-w-4xl">
-          <div className="grid gap-4 md:grid-cols-[1fr_2fr]">
+        {/* Code examples — hidden on small screens, stacked on md, side-by-side on lg */}
+        <div className="mx-auto mt-16 max-w-4xl">
+          {/* Mobile: simple install command */}
+          <div className="md:hidden rounded-lg border border-border/50 bg-[#0D0D14] px-4 py-3 font-mono text-sm text-zinc-300">
+            <span className="text-kern-light">$</span> pip install kern
+          </div>
+          {/* md+: full terminal + code block */}
+          <div className="hidden md:grid gap-4 lg:grid-cols-[1fr_2fr]">
             <TerminalAnimation />
             <CodeBlock
               code={agentCode}

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
 
-// In-memory store for development. Replace with a database or Resend audience in production.
-const waitlist: string[] = [];
+// Initialize Resend with the API key from environment variables
+const resend = new Resend(process.env.RESEND_API_KEY);
+const AUDIENCE_ID = process.env.RESEND_AUDIENCE_ID;
 
 export async function POST(request: Request) {
   try {
@@ -12,19 +14,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid email" }, { status: 400 });
     }
 
-    if (waitlist.includes(email)) {
-      return NextResponse.json({ message: "Already registered" }, { status: 200 });
+    // Fallback for local development if Resend keys are not set
+    if (!process.env.RESEND_API_KEY || !AUDIENCE_ID) {
+      console.log(`[Waitlist Local] Would have added ${email} to audience`);
+      return NextResponse.json({ message: "Added to waitlist (Local Mode)" }, { status: 201 });
     }
 
-    waitlist.push(email);
+    // Add contact to Resend Audience
+    const { error } = await resend.contacts.create({
+      email,
+      audienceId: AUDIENCE_ID,
+    });
 
-    // TODO: In production, integrate with Resend or your email service:
-    // await resend.contacts.create({ email, audienceId: process.env.RESEND_AUDIENCE_ID });
+    if (error) {
+      console.error("[Waitlist Error]", error);
+      // If they are already subscribed, Resend might throw an error, we can just treat it as a success for the user to prevent enumeration
+      return NextResponse.json({ message: "Already registered or error" }, { status: 200 });
+    }
 
-    console.log(`[Waitlist] ${email} joined (${waitlist.length} total)`);
+    console.log(`[Waitlist] ${email} successfully joined the waitlist!`);
 
     return NextResponse.json({ message: "Added to waitlist" }, { status: 201 });
-  } catch {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+  } catch (error) {
+    console.error("[Waitlist Error]", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

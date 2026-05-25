@@ -97,17 +97,17 @@ export function CodeShowcase() {
         </div>
 
         <Tabs defaultValue="structured" className="mt-12">
-          <TabsList className="mx-auto flex w-fit border border-white/10 bg-white/5">
-            <TabsTrigger value="structured" className="data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
+          <TabsList className="mx-auto flex w-full justify-start overflow-x-auto border border-white/10 bg-white/5 p-1 sm:w-fit sm:justify-center">
+            <TabsTrigger value="structured" className="whitespace-nowrap data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
               Structured Output
             </TabsTrigger>
-            <TabsTrigger value="workflow" className="data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
+            <TabsTrigger value="workflow" className="whitespace-nowrap data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
               Workflows
             </TabsTrigger>
-            <TabsTrigger value="viz" className="data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
+            <TabsTrigger value="viz" className="whitespace-nowrap data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
               Visualization
             </TabsTrigger>
-            <TabsTrigger value="repair" className="data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
+            <TabsTrigger value="repair" className="whitespace-nowrap data-[state=active]:bg-kern data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-kern/20">
               JSON Repair
             </TabsTrigger>
           </TabsList>
