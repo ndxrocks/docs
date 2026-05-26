@@ -9,9 +9,9 @@ import { cn } from "@/lib/utils";
 
 const navLinks = [
   { title: "Docs", href: "/docs/getting-started" },
-  { title: "Agents", href: "/docs/agents" },
-  { title: "Workflows", href: "/docs/workflows" },
-  { title: "Tools", href: "/docs/tools" },
+  { title: "Agents", href: "/docs/agents/overview" },
+  { title: "Workflows", href: "/docs/workflows/overview" },
+  { title: "Tools", href: "/docs/tools/overview" },
 ];
 
 export function Navbar() {

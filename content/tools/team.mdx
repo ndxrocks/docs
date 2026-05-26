@@ -1,7 +1,80 @@
 ---
 title: Team Tools
 sidebarTitle: Overview
-description: Give teams shared tool capabilities.
+description: Equip team members with specialized tools for collaborative workflows.
+mode: wide
 ---
 
-TBD
+While a single agent can use tools, cramming too many tools into a small model's prompt can confuse it. 
+
+With **Teams**, you can split your tools across highly specialized agents. When the team leader receives a task, it automatically determines which team member has the right tools for the job and delegates accordingly. 🤝
+
+---
+
+## 🛠️ Equipping Team Members
+
+To give a team tools, you simply provide the tools directly to the member `Agent`s. The `Team` coordinator will analyze the user's request and assign sub-tasks to the agents with the appropriate tools.
+
+Here is an example of a research team where one agent searches the web and the other calculates numbers:
+
+```python research_team.py
+from kern.agent import Agent
+from kern.team import Team
+from kern.models.openai import OpenAIChat
+from kern.tools.duckduckgo import DuckDuckGo
+from kern.tools.python import PythonTools
+
+local_model = OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1")
+
+# 1. Equip the researcher with search tools 🔍
+researcher = Agent(
+    name="Researcher",
+    role="Web search specialist",
+    model=local_model,
+    tools=[DuckDuckGo()],
+    instructions="Search the web for the latest information on the topic.",
+)
+
+# 2. Equip the calculator with math tools 🧮
+calculator = Agent(
+    name="Calculator",
+    role="Math specialist",
+    model=local_model,
+    tools=[PythonTools()],
+    instructions="Write and execute python to solve math problems.",
+)
+
+# 3. Form the team! The coordinator handles delegation automatically.
+research_team = Team(
+    name="Research Squad",
+    members=[researcher, calculator],
+)
+
+research_team.print_response(
+    "Search for the current population of Tokyo and Paris, then calculate the difference.", 
+    stream=True
+)
+```
+
+---
+
+## ⚙️ How Delegation Works
+
+When you run a team, the coordinator agent handles the heavy lifting:
+
+1. **Analysis**: The coordinator reads the user's prompt and analyzes the roles and toolsets of its members.
+2. **Delegation**: It generates a plan and delegates the first sub-task (e.g. "search for population") to the agent equipped with the web search tool.
+3. **Execution**: The specialized agent executes the tool and reports back.
+4. **Handoff**: The coordinator passes the results to the next agent (e.g. "calculate the difference") who uses its Python tools to run the math.
+5. **Synthesis**: The coordinator combines all tool outputs into a final, coherent response for the user.
+
+<Tip>
+  By spreading tools across a team, you keep each individual agent's system prompt small and focused. This is critical for maximizing the reasoning capabilities of 1-7B parameter models! 🧠
+</Tip>
+
+---
+
+## 📚 Next Steps
+
+- Check out the [Toolkits](/tools/toolkits/overview) you can give your team members.
+- Learn more about configuring [Teams](/teams/overview) and delegation modes.
