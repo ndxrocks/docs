@@ -5,16 +5,16 @@ import { Separator } from "@/components/ui/separator";
 const footerLinks = {
   Documentation: [
     { title: "Getting Started", href: "/docs/getting-started" },
-    { title: "Agents", href: "/docs/agents" },
-    { title: "Workflows", href: "/docs/workflows" },
-    { title: "Tools", href: "/docs/tools" },
-    { title: "Models", href: "/docs/models" },
+    { title: "Agents", href: "/docs/agents/overview" },
+    { title: "Workflows", href: "/docs/workflows/overview" },
+    { title: "Tools", href: "/docs/tools/overview" },
+    { title: "Models", href: "/docs/models/overview" },
   ],
   Resources: [
-    { title: "Structured Output", href: "/docs/structured-output" },
+    { title: "Structured Output", href: "/docs/input-output/structured-output/agent" },
     { title: "Visualization", href: "/docs/visualization" },
-    { title: "Knowledge Base", href: "/docs/knowledge" },
-    { title: "Storage", href: "/docs/storage" },
+    { title: "Knowledge Base", href: "/docs/knowledge/overview" },
+    { title: "Storage", href: "/docs/database/overview" },
   ],
   Community: [
     { title: "GitHub", href: "https://github.com/ndxrocks/kern" },

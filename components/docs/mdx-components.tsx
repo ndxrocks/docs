@@ -152,6 +152,24 @@ function Check({ children }: { children: React.ReactNode }) {
   );
 }
 
+export function Accordion({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <details className="my-4 rounded-lg border border-white/10 bg-black/20 p-4 transition-all duration-200 group">
+      <summary className="font-semibold text-sm text-foreground cursor-pointer select-none list-none flex items-center justify-between group-open:text-kern-light transition-colors">
+        <span>{title}</span>
+        <span className="transition-transform duration-200 group-open:rotate-180 text-muted-foreground text-xs">▼</span>
+      </summary>
+      <div className="mt-3 text-sm text-muted-foreground leading-relaxed">
+        {children}
+      </div>
+    </details>
+  );
+}
+
+export function AccordionGroup({ children }: { children: React.ReactNode }) {
+  return <div className="my-6 space-y-4">{children}</div>;
+}
+
 export const mdxComponents = {
   // Layout components
   CardGroup,
@@ -166,6 +184,8 @@ export const mdxComponents = {
   Frame,
   Snippet,
   Check,
+  Accordion,
+  AccordionGroup,
 
   // HTML overrides
   h1: (props: any) => <h1 className="text-3xl font-bold tracking-tight text-white mt-8 mb-4" {...props} />,
