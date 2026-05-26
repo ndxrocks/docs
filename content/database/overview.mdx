@@ -1,0 +1,156 @@
+---
+title: Persistent Memory Banks: Databases 🗄️
+sidebarTitle: Overview
+description: "Give your agents persistent storage so they remember sessions, state, and user preferences across reboots."
+keywords: [database, storage, sessions]
+mode: wide
+---
+
+If an agent doesn't have a database, it has amnesia. Every time you restart the script or reload the page, the agent completely forgets who you are and what you were doing. 
+
+Adding a database gives your agent a permanent hard drive! 🗄️
+
+With a database connected, your agents, teams, and workflows can store:
+- **Chat History**: Keep conversation history intact for seamless multi-turn conversations.
+- **Session Persistence**: Retrieve the exact state of an agent across server restarts.
+- **Long-Term Memory**: Save user preferences and extracted facts in the `kern_memories` table.
+- **Full Data Ownership**: You query your own SQL database—no third-party cloud analytics lock-in!
+
+---
+
+## 🚀 The 5-Minute SQLite Quickstart
+
+For local development, SQLite is the fastest way to get up and running. It writes a single database file locally to your machine:
+
+```python database_agent.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+
+# 1. Establish a local SQLite database 📁
+db = SqliteDb(db_file="tmp/agent_storage.db")
+
+# 2. Attach it to your agent and set history limits
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    db=db,
+    add_history_to_context=True,
+    num_history_runs=3,  # Inject the last 3 turns into the chat context 🧠
+)
+
+# Run 1: Start a conversation thread
+agent.print_response(
+    "I am working on building a local-first web app.",
+    session_id="project_session_1"
+)
+
+# Run 2: The agent retrieves the context from the database automatically!
+agent.print_response(
+    "What python web framework fits this best?",
+    session_id="project_session_1"
+)
+```
+
+---
+
+## 🗺️ How it flows
+
+Here is how data moves between the model, agent, and your storage layout:
+
+<img
+  className="block dark:hidden"
+  src="/images/storage-overview-light.png"
+  alt="Database storage overview"
+  style={{ maxWidth: '100%', transform: 'scale(1.1)' }}
+/>
+
+<img
+  className="hidden dark:block"
+  src="/images/storage-overview-dark.png"
+  alt="Database storage overview"
+  style={{ maxWidth: '100%', transform: 'scale(1.1)' }}
+/>
+
+---
+
+## 🤝 Works With Teams & Workflows
+
+Storage configs are modular. You can pass the exact same database instance directly into Teams or Workflows:
+
+```python
+from kern.team import Team
+from kern.workflow import Workflow
+from kern.db.postgres import PostgresDb
+
+db = PostgresDb(db_url="postgresql://user:pass@localhost:5432/my_app_db")
+
+# Pass it right in! 🤝
+team = Team(db=db, members=[...])
+workflow = Workflow(db=db, steps=[...])
+```
+
+---
+
+## ⚡ Async Database Support
+
+Building a high-throughput async API? Use the async database wrappers to avoid blocking the event loop:
+
+```python async_db.py
+from kern.agent import Agent
+from kern.db.postgres import AsyncPostgresDb
+
+agent = Agent(
+    db=AsyncPostgresDb(db_url="postgresql+psycopg_async://user:pass@localhost:5432/my_app_db"),
+)
+```
+
+---
+
+## 💡 Troubleshooting SQL Connections
+
+<Accordion title="Got a 'MissingGreenlet' exception? 🐛">
+  This happens if you accidentally use a synchronous database engine with an async database wrapper. Double check that you're using SQLAlchemy's async engines (e.g. `create_async_engine`).
+</Accordion>
+
+<Accordion title="Got an 'AsyncContextNotStarted' exception? 🐛">
+  This is the opposite error: you are trying to use an async engine with a synchronous database class. Use a normal connection engine or swap the database wrapper to an async one.
+</Accordion>
+
+---
+
+## 📚 Storage Guides
+
+<CardGroup cols={2}>
+  <Card
+    title="Chat History 💬"
+    icon="clock-rotate-left"
+    iconType="duotone"
+    href="/database/chat-history"
+  >
+    Control how messages are appended to your context window.
+  </Card>
+  <Card
+    title="Session Storage 💾"
+    icon="database"
+    iconType="duotone"
+    href="/database/session-storage"
+  >
+    Store and fetch custom session variables.
+  </Card>
+  <Card
+    title="Session Summaries 🗜️"
+    icon="compress"
+    iconType="duotone"
+    href="/sessions/session-summaries"
+  >
+    Compress old messages to keep token usage low on small models.
+  </Card>
+  <Card
+    title="Storage Control ⚙️"
+    icon="sliders"
+    iconType="duotone"
+    href="/sessions/persisting-sessions/storage-control"
+  >
+    Choose exactly which variables get persisted to SQLite or PG.
+  </Card>
+</CardGroup>

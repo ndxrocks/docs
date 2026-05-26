@@ -1,0 +1,125 @@
+---
+title: Docling
+description: "Convert PDFs, DOCX, HTML, images, and other documents to multiple formats like Markdown, JSON, HTML, and more."
+---
+
+**DoclingTools** enable an Agent to convert documents from multiple input formats (PDF, DOCX, PPTX, XLSX, HTML, images, audio, video, etc.) into output formats like Markdown, JSON, YAML, HTML, DocTags, and more using the [Docling library](https://github.com/docling-project/docling).
+
+## Prerequisites
+
+The following example requires the `docling` library.
+
+```shell
+uv pip install -U docling
+
+# Required for the OCR example
+uv pip install -U easyocr
+
+# Required for audio/video processing
+uv pip install -U openai-whisper
+```
+
+**ffmpeg** is also required for audio/video processing:
+- **macOS**: `brew install ffmpeg`
+- **Ubuntu**: `sudo apt-get install ffmpeg`
+- **Windows**: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
+
+## Example
+
+The following agent converts a PDF to Markdown:
+
+```python
+from kern.agent import Agent
+from kern.tools.docling import DoclingTools
+
+agent = Agent(
+    tools=[DoclingTools(all=True)],
+    description="You are an agent that converts documents from all Docling parsers and exports to all supported output formats.",
+)
+
+agent.print_response(
+    "Convert to Markdown: cookbook/07_knowledge/testing_resources/cv_1.pdf",
+    markdown=True,
+)
+```
+
+### OCR Configuration
+
+Configure OCR settings for scanned PDFs or documents with embedded images.
+
+
+```python cookbook/91_tools/docling_tools/ocr_example.py
+from kern.agent import Agent
+from kern.tools.docling import DoclingTools
+
+ocr_tools = DoclingTools(
+    pdf_enable_ocr=True,
+    pdf_ocr_engine="easyocr",
+    pdf_ocr_lang=["pt", "en"],
+    pdf_force_full_page_ocr=True,
+    pdf_enable_table_structure=True,
+    pdf_enable_picture_description=False,
+    pdf_document_timeout=120.0,
+)
+
+ocr_agent = Agent(
+    tools=[ocr_tools],
+    description="You are an agent that converts PDFs using advanced OCR.",
+)
+
+ocr_agent.print_response(
+    "Convert to Markdown: cookbook/07_knowledge/testing_resources/cv_1.pdf",
+    markdown=True,
+)
+```
+
+## Toolkit Params
+
+| Parameter                          | Type                      | Default  | Description                                                                 |
+| ---------------------------------- | ------------------------- | -------- | --------------------------------------------------------------------------- |
+| `converter`                        | `DocumentConverter`       | `None`   | Pre-configured Docling `DocumentConverter` instance                         |
+| `max_chars`                        | `int`                     | `None`   | Maximum characters in output                                                |
+| `allowed_input_formats`            | `List[str]`               | `None`   | Restrict accepted input formats (e.g. `["pdf", "docx"]`)                    |
+| `format_options`                   | `Dict[Any, Any]`          | `None`   | Custom format options passed to the converter                               |
+| `pdf_pipeline_options`             | `PdfPipelineOptions`      | `None`   | Full PDF pipeline configuration object                                      |
+| `pdf_enable_ocr`                   | `bool`                    | `None`   | Enable OCR processing for PDFs                                              |
+| `pdf_ocr_engine`                   | `str`                     | `None`   | OCR engine: `auto`, `easyocr`, `tesseract`, `tesseract_cli`, `ocrmac`, `rapidocr` |
+| `pdf_ocr_lang`                     | `List[str]`               | `None`   | OCR language codes (e.g. `["en", "pt"]`)                                    |
+| `pdf_force_full_page_ocr`          | `bool`                    | `None`   | Force OCR on every page regardless of text layer                            |
+| `pdf_enable_table_structure`       | `bool`                    | `None`   | Enable table structure recognition in PDFs                                  |
+| `pdf_enable_picture_description`   | `bool`                    | `None`   | Enable picture description extraction                                       |
+| `pdf_enable_picture_classification`| `bool`                    | `None`   | Enable picture classification                                               |
+| `pdf_document_timeout`             | `float`                   | `None`   | Timeout in seconds for PDF processing                                       |
+| `pdf_enable_remote_services`       | `bool`                    | `None`   | Enable remote services for PDF processing                                   |
+| `enable_convert_to_markdown`       | `bool`                    | `True`   | Register the `convert_to_markdown` function                                 |
+| `enable_convert_to_text`           | `bool`                    | `True`   | Register the `convert_to_text` function                                     |
+| `enable_convert_to_html`           | `bool`                    | `True`   | Register the `convert_to_html` function                                     |
+| `enable_convert_to_html_split_page`| `bool`                    | `True`   | Register the `convert_to_html_split_page` function                          |
+| `enable_convert_to_json`           | `bool`                    | `True`   | Register the `convert_to_json` function                                     |
+| `enable_convert_to_yaml`           | `bool`                    | `True`   | Register the `convert_to_yaml` function                                     |
+| `enable_convert_to_doctags`        | `bool`                    | `True`   | Register the `convert_to_doctags` function                                  |
+| `enable_convert_to_vtt`            | `bool`                    | `True`   | Register the `convert_to_vtt` function                                      |
+| `enable_convert_string_content`    | `bool`                    | `True`   | Register the `convert_string_content` function                              |
+| `enable_list_supported_parsers`    | `bool`                    | `True`   | Register the `list_supported_parsers` function                              |
+| `all`                              | `bool`                    | `False`  | Enable all conversion functions when set to `True`                          |
+
+## Toolkit Functions
+
+| Function                    | Description                                                                                                                                                                                              |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `convert_to_markdown`       | Converts a document (file path or URL) to Markdown. Accepts `source`, optional `headers` for URL requests, `raises_on_error`, `max_num_pages`, and `max_file_size`.                                     |
+| `convert_to_text`           | Converts a document to plain text. Same parameters as `convert_to_markdown`.                                                                                                                             |
+| `convert_to_html`           | Converts a document to HTML. Same parameters as `convert_to_markdown`.                                                                                                                                   |
+| `convert_to_html_split_page`| Converts a document to HTML with page-level splitting. Same parameters as `convert_to_markdown`.                                                                                                         |
+| `convert_to_json`           | Converts a document to JSON. Same parameters as `convert_to_markdown`.                                                                                                                                   |
+| `convert_to_yaml`           | Converts a document to YAML. Same parameters as `convert_to_markdown`.                                                                                                                                   |
+| `convert_to_doctags`        | Converts a document to DocTags format. Same parameters as `convert_to_markdown`.                                                                                                                         |
+| `convert_to_vtt`            | Converts a document (including audio/video) to VTT subtitle format. Same parameters as `convert_to_markdown`.                                                                                            |
+| `convert_string_content`    | Converts raw string content (Markdown or HTML) to another format. Accepts `content`, `source_format` (default `"markdown"`), `output_format` (default `"markdown"`), and optional `name`.                |
+| `list_supported_parsers`    | Lists all supported Docling input parsers and any active format restrictions.                                                                                                                            |
+
+## Developer Resources
+
+- View [Tools](https://github.com/kern-ai/kern/blob/main/libs/kern/kern/tools/docling.py)
+- [Cookbook Examples](https://github.com/kern-ai/kern/tree/main/cookbook/91_tools/docling_tools)
+- [Docling Documentation](https://docling-project.github.io/docling/)

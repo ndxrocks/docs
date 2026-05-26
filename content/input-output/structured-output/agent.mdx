@@ -1,0 +1,94 @@
+---
+title: Structured Output with Agents
+sidebarTitle: Agent Output
+description: Master Kern's template-based output system for reliable JSON from small language models.
+---
+
+Structured outputs are essential when agents need to feed downstream APIs, populate databases, or return clean JSON. While general frameworks send raw JSON Schemas to the model (which confuses models under 7B parameters), Kern uses a **template-based structured output engine** and **automatic JSON repair**.
+
+---
+
+## Why templates work better for small models
+
+Models under 7 billion parameters struggle with abstract JSON Schema definitions (e.g. `{"type": "object", "properties": {...}}`). They often get confused by nesting, miss required fields, and output malformed JSON.
+
+Kern solves this by converting your Pydantic model into a **fill-in-the-blank template**:
+
+1. **Shows the pattern**: The model sees exactly what the final text structure should look like.
+2. **Close-ended completion**: The model just fills in the values, mirroring how text completions naturally work.
+3. **No extra commentary**: The template restricts the model's generation scope, keeping it on track.
+
+---
+
+## Basic Usage
+
+To request structured output, define a Pydantic model and pass it as the `output_schema` to your agent:
+
+```python
+from pydantic import BaseModel, Field
+from typing import Literal
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+class MovieAnalysis(BaseModel):
+    title: str = Field(description="The title of the movie")
+    release_year: int = Field(description="Year the movie was released")
+    sentiment: Literal["positive", "negative", "neutral"] = Field(description="Review sentiment")
+    summary: str = Field(description="A 2-sentence summary of the review")
+
+agent = Agent(
+    model=OpenAIChat(
+        id="local-model",
+        base_url="http://localhost:8080/v1",
+    ),
+    description="You are a movie review analyst.",
+    output_schema=MovieAnalysis,
+)
+
+result = agent.run("The Matrix (1999) is an absolute masterpiece of science fiction!")
+
+# result.content is a validated MovieAnalysis Pydantic object
+print(result.content.title)         # "The Matrix"
+print(result.content.release_year)   # 1999
+print(result.content.sentiment)      # "positive"
+```
+
+---
+
+## Automatic JSON Repair
+
+Small language models frequently output slightly broken JSON (e.g. omitting a closing bracket, adding a trailing comma, or wrapping the JSON in markdown code blocks or conversational commentary).
+
+Kern intercepts the raw model output and passes it through an **automatic JSON repair engine**. The engine:
+- Removes pre/post conversational text.
+- Standardizes quote characters.
+- Completes unclosed brackets or braces.
+- Handles trailing commas.
+- Strips invalid markdown fences.
+
+You can also use this repair capability directly on raw strings in your code:
+
+```python
+from kern.repair import extract_json
+
+raw_output = """
+Sure! Here is the JSON data:
+{
+    "title": "Inception",
+    "director": "Christopher Nolan"
+""" # Note the unclosed brace
+
+data = extract_json(raw_output)
+print(data)
+# {'title': 'Inception', 'director': 'Christopher Nolan'}
+# Auto-completed the closing brace!
+```
+
+---
+
+## Best Practices for Structured Outputs on Small Models
+
+1. **Provide Clear Descriptions**: Use Pydantic's `Field(description="...")` to give explicit instructions for each field.
+2. **Use Literal Types**: Use `Literal` types (e.g. `Literal["low", "medium", "high"]`) instead of free-form strings. Small models follow strict lists much better.
+3. **Avoid Deep Nesting**: Keep your Pydantic schemas relatively flat. Deeply nested objects require multi-step reasoning that small models (1-7B) struggle with.
+4. **Lower the Temperature**: Set `temperature=0.1` or `0.0` for structured extraction. Lower values make outputs more deterministic and structured.

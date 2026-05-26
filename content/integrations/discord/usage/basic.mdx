@@ -1,0 +1,48 @@
+---
+title: Basic
+---
+
+## Code
+
+```python cookbook/13_integrations/discord/basic.py
+from kern.agent import Agent
+from kern.integrations.discord import DiscordClient
+from kern.models.openai import OpenAIResponses
+
+basic_agent = Agent(
+    name="Basic Agent",
+    model=OpenAIResponses(id="gpt-5.2"),
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+)
+
+discord_agent = DiscordClient(basic_agent)
+if __name__ == "__main__":
+    discord_agent.serve()
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set your API keys">
+    ```bash
+    export OPENAI_API_KEY=xxx
+    export DISCORD_BOT_TOKEN=xxx
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai openai discord.py
+    ```
+  </Step>
+
+  <Step title="Run Agent">
+    ```bash
+    python cookbook/13_integrations/discord/basic.py
+    ```
+  </Step>
+</Steps>

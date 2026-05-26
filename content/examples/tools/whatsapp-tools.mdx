@@ -1,0 +1,55 @@
+---
+title: "WhatsApp"
+description: "Use WhatsApp with Kern agents."
+---
+
+## Prerequisites
+
+<AccordionGroup>
+  <Accordion title="Set up a Meta Developer App">
+    1. Go to the [Meta Developer Portal](https://developers.facebook.com/) and create a developer account.
+    2. Create a new **Business** app at the [Apps Dashboard](https://developers.facebook.com/apps/).
+    3. Add the **WhatsApp** product to your app from the app dashboard.
+    4. In **WhatsApp > API Setup**, note your **Phone Number ID** and generate an **Access Token**.
+  </Accordion>
+  <Accordion title="Configure environment variables">
+    ```bash
+    export WHATSAPP_ACCESS_TOKEN=your_access_token
+    export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+    export WHATSAPP_RECIPIENT_WAID=recipient_phone_number   # e.g. 1234567890
+    ```
+  </Accordion>
+</AccordionGroup>
+
+<Note>
+For first-time outreach to a user, you must use [pre-approved message templates](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates). Test messages can only be sent to numbers registered in your test environment.
+</Note>
+
+## Example
+
+The following agent sends a template message via WhatsApp:
+
+```python cookbook/91_tools/whatsapp_tools.py
+from kern.agent import Agent
+from kern.models.google import Gemini
+from kern.tools.whatsapp import WhatsAppTools
+
+agent = Agent(
+    name="whatsapp",
+    model=Gemini(id="gemini-3-flash-preview"),
+    tools=[WhatsAppTools()],
+)
+
+agent.print_response(
+    "Send a template message using the 'hello_world' template in English to +1 1234567890"
+)
+```
+
+## Run the Example
+
+```bash
+pip install kern-ai google-generativeai
+python whatsapp_tools.py
+```
+
+For more examples, see the [WhatsApp cookbooks](https://github.com/kern-ai/kern/tree/main/cookbook/05_agent_os/interfaces/whatsapp).

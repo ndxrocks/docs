@@ -1,0 +1,55 @@
+---
+title: "Chat Knowledge"
+description: "Add content to the knowledge."
+---
+```python
+"""Run `uv pip install ddgs sqlalchemy pgvector pypdf openai ollama` to install dependencies."""
+
+from kern.agent import Agent
+from kern.knowledge.embedder.ollama import OllamaEmbedder
+from kern.knowledge.knowledge import Knowledge
+from kern.models.ollama import Ollama
+from kern.vectordb.pgvector import PgVector
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+
+knowledge = Knowledge(
+    vector_db=PgVector(
+        table_name="recipes",
+        db_url=db_url,
+        embedder=OllamaEmbedder(id="llama3.2", dimensions=3072),
+    ),
+)
+# Add content to the knowledge
+knowledge.insert(url="https://kern-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf")
+
+agent = Agent(model=Ollama(id="llama3.2"), knowledge=knowledge)
+agent.print_response("How to make Thai curry?", markdown=True)
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    pass
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/90_models/ollama/chat
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+# Optiona: Run PgVector (needs docker)
+./cookbook/scripts/run_pgvector.sh
+
+python knowledge.py
+```

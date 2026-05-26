@@ -1,0 +1,93 @@
+---
+title: "Docling"
+description: "Convert documents to Markdown, JSON, HTML, and other formats with configurable OCR using the [Docling library](https://github.com/docling-project/docling)."
+---
+
+## Prerequisites
+
+```shell
+uv pip install -U docling
+
+# Required for the OCR example
+uv pip install -U easyocr
+
+# Required for audio/video processing
+uv pip install -U openai-whisper
+```
+
+**ffmpeg** is also required for audio/video processing:
+- **macOS**: `brew install ffmpeg`
+- **Ubuntu**: `sudo apt-get install ffmpeg`
+- **Windows**: Download from [ffmpeg.org](https://ffmpeg.org/download.html)
+
+## Example
+
+```python
+from kern.agent import Agent
+from kern.tools.docling import DoclingTools
+
+agent = Agent(
+    tools=[DoclingTools(all=True)],
+    description="You are an agent that converts documents from all Docling parsers and exports to all supported output formats.",
+)
+
+# Convert a PDF to Markdown
+agent.print_response(
+    "Convert to Markdown: cookbook/07_knowledge/testing_resources/cv_1.pdf",
+    markdown=True,
+)
+
+# Convert a PDF to JSON
+agent.print_response(
+    "Convert to JSON and return the full JSON without summarizing: cookbook/07_knowledge/testing_resources/cv_1.pdf",
+    markdown=True,
+)
+
+# Convert inline string content
+agent.print_response(
+    "Use convert_string_content to convert this markdown string to JSON: # Inline Markdown\n\nThis is a parser test.",
+    markdown=True,
+)
+```
+
+### OCR Configuration
+
+```python cookbook/91_tools/docling_tools/ocr_example.py
+from kern.agent import Agent
+from kern.tools.docling import DoclingTools
+
+ocr_tools = DoclingTools(
+    pdf_enable_ocr=True,
+    pdf_ocr_engine="easyocr",
+    pdf_ocr_lang=["pt", "en"],
+    pdf_force_full_page_ocr=True,
+    pdf_enable_table_structure=True,
+    pdf_enable_picture_description=False,
+    pdf_document_timeout=120.0,
+)
+
+ocr_agent = Agent(
+    tools=[ocr_tools],
+    description="You are an agent that converts PDFs using advanced OCR.",
+)
+
+ocr_agent.print_response(
+    "Convert to Markdown: cookbook/07_knowledge/testing_resources/cv_1.pdf",
+    markdown=True,
+)
+```
+
+## Run the Example
+
+```bash
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools/docling_tools
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python docling_tools.py
+```
+
+For details, see [Docling Tools cookbook](https://github.com/kern-ai/kern/tree/main/cookbook/91_tools/docling_tools).

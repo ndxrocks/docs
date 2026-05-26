@@ -1,0 +1,46 @@
+---
+title: "Hackernews"
+description: "Use Hackernews with Kern agents."
+---
+
+Enable Kern agents to tap into tje communities of engineers, founders, and researchers and track emerging trends, find new tools, and monitor sentiment in real-time.
+
+```python
+
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+from kern.tools.hackernews import HackerNewsTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+
+agent = Agent(
+    model=Claude(id="claude-sonnet-4-5"),
+    tools=[HackerNewsTools()],
+    markdown=True,
+)
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response(
+        "Write a report on trending startups and products.", stream=True
+    )
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python hackernews_tools.py
+```
+For details, see [Hackernews cookbook](https://github.com/kern-ai/kern/blob/main/cookbook/91_tools/hackernews_tools.py).

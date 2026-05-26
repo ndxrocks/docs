@@ -1,0 +1,215 @@
+---
+title: Setting Up Your Lab 🧪
+sidebarTitle: Install & Setup
+description: "How to set up your Python environment, install Kern, connect local models, and run your first agent."
+---
+
+Let's get your local agent laboratory ready. 🧪 We will:
+1. Create a Python virtual environment.
+2. Install the `kern-ai` SDK.
+3. Configure your local model connection (Ollama, llama.cpp, etc.).
+4. Run your first file-inspector agent.
+5. Boot up an API service using AgentOS.
+
+---
+
+## 📦 1. Create a Virtual Environment
+
+Kern requires **Python 3.10 or newer**. We recommend [`uv`](https://docs.astral.sh/uv/) for lightning-fast package management, but standard `venv` works great too.
+
+<CodeGroup>
+
+```bash uv
+# Create and activate
+uv venv --python 3.12
+source .venv/bin/activate
+```
+
+```bash pip (Mac/Linux)
+# Create and activate
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+```bash pip (Windows)
+# Create and activate
+python -m venv .venv
+.venv\Scripts\activate
+```
+
+</CodeGroup>
+
+---
+
+## 💾 2. Install Kern
+
+Install the core SDK along with the standard client dependencies:
+
+<CodeGroup>
+
+```bash uv
+uv pip install -U kern-ai openai
+```
+
+```bash pip
+pip install -U kern-ai openai
+```
+
+</CodeGroup>
+
+---
+
+## 🔌 3. Connect to a Model
+
+Kern is designed around the OpenAI-compatible completions API, making it easy to point to local model servers or cloud providers.
+
+### Local Servers (Recommended) 💻
+Boot up a local model runner and note its endpoint. Here are the default endpoints for popular local managers:
+
+| Runner | Default Endpoint | Example Model |
+| :--- | :--- | :--- |
+| **Ollama** | `http://localhost:11434/v1` | `llama3.2:3b` / `qwen2.5:3b` |
+| **llama.cpp server** | `http://localhost:8080/v1` | Any GGUF file |
+| **LM Studio** | `http://localhost:1234/v1` | Any downloaded GGUF |
+| **vLLM** | `http://localhost:8000/v1` | Any HuggingFace repo |
+
+### Cloud Providers (Optional) ☁️
+If you want to use cloud APIs, export your credentials to your shell environment:
+
+<CodeGroup>
+
+```bash Mac/Linux
+export OPENAI_API_KEY=sk-***
+```
+
+```bash Windows
+setx OPENAI_API_KEY sk-***
+```
+
+</CodeGroup>
+
+---
+
+## 🎩 4. Run Your First Agent
+
+Save the script below as `sorting_hat.py`. It uses a local Ollama model to scan its own directory and organize it:
+
+```python sorting_hat.py
+from pathlib import Path
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.workspace import Workspace
+
+# Determine current script folder
+folder = Path(__file__).parent
+
+# 1. Spawn the sorting hat agent! 🎩
+sorting_hat = Agent(
+    model=OpenAIChat(
+        id="llama3.2:3b",
+        base_url="http://localhost:11434/v1",  # Connecting to Ollama
+    ),
+    tools=[Workspace(root=str(folder), allowed=["read", "list"])],
+    instructions="Inspect the files in this folder, group them by type, and print a tidy summary tree.",
+    markdown=True,
+)
+
+# 2. Tell the agent to inventory the workspace
+sorting_hat.print_response(f"Inventory and organize the files in: {folder}", stream=True)
+```
+
+Run your script:
+
+```bash
+python sorting_hat.py
+```
+
+You should see your local model read the folder, execute the workspace tool, and print a formatted directory breakdown in your terminal! 🚀
+
+---
+
+## 🌐 5. Serve Your Agent with AgentOS
+
+To go from a local test script to a production service with chat UI interfaces, session histories, and telemetry, run your agent using **AgentOS**.
+
+Install the OS runtime extras:
+
+<CodeGroup>
+
+```bash uv
+uv pip install -U 'kern-ai[os]'
+```
+
+```bash pip
+pip install -U 'kern-ai[os]'
+```
+
+</CodeGroup>
+
+Save the script below as `workbench.py`:
+
+```python workbench.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.os import AgentOS
+from kern.models.openai import OpenAIChat
+
+# Build our agent
+workbench = Agent(
+    name="Workbench Agent",
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    db=SqliteDb(db_file="tmp/workbench.db"),
+    add_history_to_context=True,
+    num_history_runs=3,
+)
+
+# Wrap it in AgentOS to expose it as an API
+agent_os = AgentOS(agents=[workbench], tracing=True)
+app = agent_os.get_app()
+```
+
+Run your FastAPI server:
+
+```bash
+fastapi dev workbench.py
+```
+
+Your API is now live at `http://localhost:8000`. You can inspect the Swagger specs at `http://localhost:8000/docs`, or head over to the visual console at [os.kern.ndx.rocks](https://os.kern.ndx.rocks) to add your server and start chatting!
+
+---
+
+## 🗄️ Running a Postgres Database
+
+If you want to use PostgreSQL + pgvector for long-term production storage, you can run pgvector locally using Docker:
+
+```bash
+docker run -d \
+  --name kern-postgres \
+  -e POSTGRES_USER=ai \
+  -e POSTGRES_PASSWORD=ai \
+  -e POSTGRES_DB=ai \
+  -p 5432:5432 \
+  -v kern-pgdata:/var/lib/postgresql/data \
+  pgvector/pgvector:pg16  # Standard official pgvector image 🐳
+```
+
+Once running, point your database adapter in Python to the local container:
+`db = PostgresDb(db_url="postgresql://ai:ai@localhost:5432/ai")`
+
+---
+
+## 📚 Let's Start Building!
+
+Explore the main sections:
+
+<CardGroup cols={3}>
+  <Card title="Agents 🤖" icon="robot" iconType="duotone" href="/agents/overview">
+    Instructions, custom tools, and execution models.
+  </Card>
+  <Card title="Teams 🤝" icon="users" iconType="duotone" href="/teams/overview">
+    Divide tasks among specialized agents.
+  </Card>
+  <Card title="Workflows ⛓️" icon="diagram-project" iconType="duotone" href="/workflows/overview">
+    Deterministic pipelines with custom steps.
+  </Card>
+</CardGroup>

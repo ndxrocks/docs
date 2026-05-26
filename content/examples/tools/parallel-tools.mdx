@@ -1,0 +1,48 @@
+---
+title: "Parallel"
+description: "Use Parallel tools with Kern agents."
+---
+
+Enable Kern agents with web search and extraction infrastructure from Parallel that prioritizes token efficiency and multi-hop reasoning.
+
+```python
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIResponses
+from kern.tools.parallel import ParallelTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.1"),
+    tools=[ParallelTools()],
+    instructions="No need to tell me its based on your research.",
+    markdown=True,
+)
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response(
+        "Tell me about Kern's AgentOS?",
+        stream=True,
+        stream_events=True,
+    )
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python parallel_tools.py
+```
+For details, see [Parallel cookbook](https://github.com/kern-ai/kern/blob/main/cookbook/91_tools/parallel_tools.py).

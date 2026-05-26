@@ -1,0 +1,775 @@
+{
+  "nodes": [
+    {
+      "id": "layout_root-layout",
+      "label": "RootLayout",
+      "file_type": "code",
+      "source_file": "app/layout.tsx",
+      "source_location": 26,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "page_home-page",
+      "label": "HomePage",
+      "file_type": "code",
+      "source_file": "app/page.tsx",
+      "source_location": 11,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "providers_providers",
+      "label": "Providers",
+      "file_type": "code",
+      "source_file": "components/providers.tsx",
+      "source_location": 7,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_docs-layout",
+      "label": "DocsLayout",
+      "file_type": "code",
+      "source_file": "app/docs/layout.tsx",
+      "source_location": 4,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_code-block",
+      "label": "CodeBlock",
+      "file_type": "code",
+      "source_file": "components/docs/code-block.tsx",
+      "source_location": 15,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_mobile-nav",
+      "label": "DocsMobileNav",
+      "file_type": "code",
+      "source_file": "components/docs/mobile-nav.tsx",
+      "source_location": 12,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "api_waitlist-route",
+      "label": "Waitlist API Route",
+      "file_type": "code",
+      "source_file": "app/api/waitlist/route.ts",
+      "source_location": 8,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "blog_blog-index",
+      "label": "BlogIndexPage",
+      "file_type": "code",
+      "source_file": "app/blog/page.tsx",
+      "source_location": 10,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "blog_blog-post",
+      "label": "BlogPostPage",
+      "file_type": "code",
+      "source_file": "app/blog/[slug]/page.tsx",
+      "source_location": 52,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_docs-page-redirect",
+      "label": "DocsPage Redirect",
+      "file_type": "code",
+      "source_file": "app/docs/page.tsx",
+      "source_location": 3,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_agents-page",
+      "label": "AgentsPage",
+      "file_type": "code",
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": 136,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_getting-started-page",
+      "label": "GettingStartedPage",
+      "file_type": "code",
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 58,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_knowledge-page",
+      "label": "KnowledgePage",
+      "file_type": "code",
+      "source_file": "app/docs/knowledge/page.tsx",
+      "source_location": 5,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_models-page",
+      "label": "ModelsPage",
+      "file_type": "code",
+      "source_file": "app/docs/models/page.tsx",
+      "source_location": 38,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_storage-page",
+      "label": "StoragePage",
+      "file_type": "code",
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": 4,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_structured-output-page",
+      "label": "StructuredOutputPage",
+      "file_type": "code",
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": 167,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_tools-page",
+      "label": "ToolsPage",
+      "file_type": "code",
+      "source_file": "app/docs/tools/page.tsx",
+      "source_location": 82,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_visualization-page",
+      "label": "VisualizationPage",
+      "file_type": "code",
+      "source_file": "app/docs/visualization/page.tsx",
+      "source_location": 5,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "docs_workflows-page",
+      "label": "WorkflowsPage",
+      "file_type": "code",
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": 3,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "code-block_tokenize-python",
+      "label": "tokenizePython",
+      "file_type": "code",
+      "source_file": "components/docs/code-block.tsx",
+      "source_location": 129,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "code-block_python-highlight",
+      "label": "PythonHighlight",
+      "file_type": "code",
+      "source_file": "components/docs/code-block.tsx",
+      "source_location": 93,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": null
+    },
+    {
+      "id": "concept_template-based-structured-output",
+      "label": "Template-Based Structured Output",
+      "file_type": "rationale",
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "Small models under 7B parameters struggle with JSON Schema. Nested type/object/properties syntax confuses them, producing malformed output. Fill-in-the-blank templates mirror what the model naturally wants to write, making the pattern intuitive and close-ended rather than an abstract schema specification."
+    },
+    {
+      "id": "concept_json-repair",
+      "label": "JSON Repair Pipeline",
+      "file_type": "rationale",
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "Even with templates, small models sometimes produce slightly broken JSON with missing braces, trailing commas, or mixed-in commentary. extract_json() handles these common failure modes automatically as a post-processing safety net."
+    },
+    {
+      "id": "concept_kern-agent",
+      "label": "Kern Agent",
+      "file_type": "rationale",
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "Core building block. Wraps a language model with instructions, tools, and structured output to turn a raw LLM into a purposeful, task-oriented assistant optimized for small models (1-7B parameters). Uses output_schema instead of Agno's response_model."
+    },
+    {
+      "id": "concept_workflow-step-types",
+      "label": "Workflow Step Types",
+      "file_type": "rationale",
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "Composable step types (Step, Condition, Router, Loop, Parallel) enable expressing branching, routing, repetition, and concurrency within a single workflow definition. Each step delegates to an Agent."
+    },
+    {
+      "id": "concept_kern-knowledge-base",
+      "label": "Kern Knowledge Base (RAG)",
+      "file_type": "rationale",
+      "source_file": "app/docs/knowledge/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "When a knowledge base is attached to an agent, Kern automatically searches it on each run and injects relevant context into the agent's instructions. This gives small models the information they need without bloating the prompt."
+    },
+    {
+      "id": "concept_session-storage",
+      "label": "Session Storage",
+      "file_type": "rationale",
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "Persist agent sessions, conversations, and state across runs. Supports Postgres, SQLite, Redis, MongoDB backends. Conversations are automatically saved and can be resumed via session_id."
+    },
+    {
+      "id": "concept_model-providers",
+      "label": "Model Provider Abstraction",
+      "file_type": "rationale",
+      "source_file": "app/docs/models/page.tsx",
+      "source_location": null,
+      "source_url": null,
+      "captured_at": null,
+      "author": null,
+      "contributor": "Kern framework design",
+      "rationale": "All model providers follow the same interface. Swap the import and model ID and agent code stays the same. Local models are the primary use case for privacy, zero cost, and full control. Supports OpenAI-compatible endpoints, Ollama, OpenAI, Anthropic, Google, Groq, and more."
+    }
+  ],
+  "edges": [
+    {
+      "source": "layout_root-layout",
+      "target": "providers_providers",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/layout.tsx",
+      "source_location": 34,
+      "weight": 1.0
+    },
+    {
+      "source": "page_home-page",
+      "target": "docs_code-block",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "app/page.tsx",
+      "source_location": null,
+      "weight": 0.5
+    },
+    {
+      "source": "docs_docs-layout",
+      "target": "docs_mobile-nav",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/layout.tsx",
+      "source_location": 9,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_docs-page-redirect",
+      "target": "docs_getting-started-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/page.tsx",
+      "source_location": 4,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_agents-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": 166,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_getting-started-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 81,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_knowledge-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/knowledge/page.tsx",
+      "source_location": 23,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_models-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/models/page.tsx",
+      "source_location": 76,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_storage-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": 39,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_structured-output-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": 214,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_tools-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/tools/page.tsx",
+      "source_location": 142,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_visualization-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/visualization/page.tsx",
+      "source_location": 25,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_workflows-page",
+      "target": "docs_code-block",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": 28,
+      "weight": 1.0
+    },
+    {
+      "source": "code-block_python-highlight",
+      "target": "code-block_tokenize-python",
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "components/docs/code-block.tsx",
+      "source_location": 94,
+      "weight": 1.0
+    },
+    {
+      "source": "blog_blog-index",
+      "target": "blog_blog-post",
+      "relation": "shares_data_with",
+      "confidence": "INFERRED",
+      "confidence_score": 0.95,
+      "source_file": "app/blog/page.tsx",
+      "source_location": 55,
+      "weight": 0.9
+    },
+    {
+      "source": "api_waitlist-route",
+      "target": "page_home-page",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/api/waitlist/route.ts",
+      "source_location": null,
+      "weight": 0.5
+    },
+    {
+      "source": "docs_knowledge-page",
+      "target": "docs_storage-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/knowledge/page.tsx",
+      "source_location": 115,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_storage-page",
+      "target": "docs_knowledge-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": 110,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_workflows-page",
+      "target": "docs_visualization-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": 253,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_visualization-page",
+      "target": "docs_workflows-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/visualization/page.tsx",
+      "source_location": 151,
+      "weight": 1.0
+    },
+    {
+      "source": "concept_template-based-structured-output",
+      "target": "concept_kern-agent",
+      "relation": "rationale_for",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept_json-repair",
+      "target": "concept_template-based-structured-output",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept_kern-agent",
+      "target": "concept_model-providers",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept_kern-agent",
+      "target": "concept_kern-knowledge-base",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept_kern-agent",
+      "target": "concept_session-storage",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "concept_workflow-step-types",
+      "target": "concept_kern-agent",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "concept_template-based-structured-output",
+      "target": "concept_json-repair",
+      "relation": "conceptually_related_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "weight": 0.8
+    },
+    {
+      "source": "docs_knowledge-page",
+      "target": "concept_kern-knowledge-base",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/knowledge/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_storage-page",
+      "target": "concept_session-storage",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_structured-output-page",
+      "target": "concept_template-based-structured-output",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_agents-page",
+      "target": "concept_kern-agent",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/agents/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_models-page",
+      "target": "concept_model-providers",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/models/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_workflows-page",
+      "target": "concept_workflow-step-types",
+      "relation": "implements",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/workflows/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    },
+    {
+      "source": "docs_mobile-nav",
+      "target": "docs_agents-page",
+      "relation": "references",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "components/docs/mobile-nav.tsx",
+      "source_location": null,
+      "weight": 0.6
+    },
+    {
+      "source": "docs_getting-started-page",
+      "target": "docs_agents-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 39,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_getting-started-page",
+      "target": "docs_models-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 44,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_getting-started-page",
+      "target": "docs_tools-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 49,
+      "weight": 1.0
+    },
+    {
+      "source": "docs_getting-started-page",
+      "target": "docs_workflows-page",
+      "relation": "references",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "app/docs/getting-started/page.tsx",
+      "source_location": 54,
+      "weight": 1.0
+    },
+    {
+      "source": "concept_session-storage",
+      "target": "concept_kern-knowledge-base",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.65,
+      "source_file": "app/docs/storage/page.tsx",
+      "source_location": null,
+      "weight": 0.5
+    },
+    {
+      "source": "docs_structured-output-page",
+      "target": "docs_agents-page",
+      "relation": "semantically_similar_to",
+      "confidence": "INFERRED",
+      "confidence_score": 0.75,
+      "source_file": "app/docs/structured-output/page.tsx",
+      "source_location": null,
+      "weight": 0.7
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "docs_rendering_system",
+      "label": "Docs Page Rendering System",
+      "nodes": [
+        "docs_docs-layout",
+        "docs_mobile-nav",
+        "docs_code-block",
+        "docs_agents-page",
+        "docs_getting-started-page",
+        "docs_knowledge-page",
+        "docs_models-page",
+        "docs_storage-page",
+        "docs_structured-output-page",
+        "docs_tools-page",
+        "docs_visualization-page",
+        "docs_workflows-page"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "app/docs/layout.tsx"
+    },
+    {
+      "id": "blog_system",
+      "label": "Blog System with Shared Data",
+      "nodes": [
+        "blog_blog-index",
+        "blog_blog-post"
+      ],
+      "relation": "participate_in",
+      "confidence": "EXTRACTED",
+      "confidence_score": 0.95,
+      "source_file": "app/blog/page.tsx"
+    },
+    {
+      "id": "kern_agent_api_concept",
+      "label": "Kern Agent API Documentation",
+      "nodes": [
+        "concept_kern-agent",
+        "concept_template-based-structured-output",
+        "concept_model-providers",
+        "concept_kern-knowledge-base",
+        "concept_session-storage",
+        "concept_workflow-step-types"
+      ],
+      "relation": "form",
+      "confidence": "INFERRED",
+      "confidence_score": 0.85,
+      "source_file": "app/docs/agents/page.tsx"
+    }
+  ],
+  "input_tokens": 0,
+  "output_tokens": 0
+}

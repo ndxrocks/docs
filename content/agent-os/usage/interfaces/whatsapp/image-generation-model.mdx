@@ -1,0 +1,70 @@
+---
+title: "WhatsApp Image Generation Agent (Model-based)"
+description: "WhatsApp agent that generates images using Gemini's built-in capabilities"
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/whatsapp/image_generation_model.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.google import Gemini
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+
+agent_db = SqliteDb(db_file="tmp/persistent_memory.db")
+image_agent = Agent(
+    id="image_generation_model",
+    db=agent_db,
+    model=Gemini(
+        id="models/gemini-2.5-flash-image",
+        response_modalities=["Text", "Image"],
+    ),
+)
+
+agent_os = AgentOS(
+    agents=[image_agent],
+    interfaces=[Whatsapp(agent=image_agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="image_generation_model:app", reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export WHATSAPP_ACCESS_TOKEN=your_access_token
+    export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+    export WHATSAPP_VERIFY_TOKEN=your_verify_token
+    export WHATSAPP_SKIP_SIGNATURE_VALIDATION=true  # For local dev
+    export GOOGLE_API_KEY=your_google_api_key
+    ```
+
+    See the [WhatsApp Bot setup guide](/deploy/interfaces/whatsapp/overview) for how to get these values from the [Meta Developer Dashboard](https://developers.facebook.com/apps/).
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai google-generativeai
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/whatsapp/image_generation_model.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Direct Image Generation**: Gemini Flash with native image generation
+- **Text-to-Image**: Converts descriptions into visual content
+- **Multimodal Responses**: Generates both text and images
+- **WhatsApp Integration**: Sends images directly through WhatsApp

@@ -1,0 +1,44 @@
+---
+title: "SQL"
+description: "Use SQL tools with Kern agents."
+---
+
+Enable Kern agents to autonomously navigate databases, translate natural language into SQL, and execute queries to provide structured answers.
+
+```python
+
+from kern.agent import Agent
+from kern.tools.sql import SQLTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+
+db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+
+agent = Agent(tools=[SQLTools(db_url=db_url)])
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response(
+        "List the tables in the database. Tell me about contents of one of the tables",
+        markdown=True,
+    )
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python sql_tools.py
+```
+For details, see [SQL Tools cookbook](https://github.com/kern-ai/kern/blob/main/cookbook/91_tools/sql_tools.py). 

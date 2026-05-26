@@ -1,0 +1,45 @@
+---
+title: Agent with Tools and Streaming
+---
+
+## Code
+
+```python cookbook/11_models/portkey/tool_use_stream.py
+from kern.agent import Agent
+from kern.models.portkey import Portkey
+from kern.tools.hackernews import HackerNewsTools
+
+agent = Agent(
+    model=Portkey(id="@first-integrati-707071/gpt-5-nano"),
+    tools=[HackerNewsTools()],
+    markdown=True,
+)
+
+# Print the response in the terminal
+agent.print_response("What are the latest developments in AI gateways?", stream=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set your API keys">
+    ```bash
+    export PORTKEY_API_KEY=***
+    export PORTKEY_VIRTUAL_KEY=***
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai
+    ```
+  </Step>
+
+  <Step title="Run Agent">
+    ```bash
+    python cookbook/11_models/portkey/tool_use_stream.py
+    ```
+  </Step>
+</Steps>

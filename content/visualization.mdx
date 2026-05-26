@@ -1,0 +1,133 @@
+---
+title: Visualization & Response Display
+description: Learn how to display agent outputs, stream tokens, view execution traces, and render Mermaid workflow flowcharts.
+---
+
+Everything Kern produces — agent responses, workflow diagrams, debug traces, and streaming output — can be rendered visually. This guide covers how to display responses in your application, inspect execution traces, and generate visual diagrams from your workflows.
+
+---
+
+## Agent Response Display
+
+Every call to `agent.run()` returns a `RunOutput` object. This object contains structured metadata, token usage, and media contents.
+
+### Basic Response Inspection
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    description="You are a research assistant.",
+)
+
+response = agent.run("Explain quantum computing in one sentence")
+
+print(response.content)      # The raw text response
+print(response.model)        # "gpt-4o-mini"
+print(response.usage.total)  # Total token count
+```
+
+### The RunOutput Attributes
+
+| Attribute | Type | Description |
+| :--- | :--- | :--- |
+| **`content`** | `str \| BaseModel` | The main response content (a string, or a Pydantic object if `output_schema` is set). |
+| **`messages`** | `list[Message]` | The full chat history, including system instructions and assistant turns. |
+| **`tool_calls`** | `list[ToolCall]` | Any tools that were called during execution. |
+| **`usage`** | `TokenUsage` | Tokens consumed (input, output, and total). |
+
+---
+
+## Response Formatting
+
+### Markdown Rendering
+Set `markdown=True` on your agent to instruct the model to produce clean, structured markdown output.
+
+```python
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    markdown=True,
+    description="Write in markdown format.",
+)
+```
+
+### Streaming Display
+For real-time typewriter effects, use `agent.run_stream()` to yield tokens as they are generated, or call `agent.print_response()` to stream directly to stdout:
+
+```python
+# Stream to console
+agent.print_response("Explain binary search", stream=True)
+```
+
+---
+
+## Observability & Tracing Dashboard
+
+Kern includes a local, lightweight control plane and dashboard. You can log all agent sessions, tool calls, and execution steps to a local database and inspect them in real time.
+
+### Enable Tracing
+
+Enable `tracing=True` when initializing `AgentOS` to capture runs automatically:
+
+```python
+from kern.os import AgentOS
+from kern.db.sqlite import SqliteDb
+
+db = SqliteDb(db_file="traces.db")
+
+agent_os = AgentOS(
+    agents=[agent],
+    db=db,
+    tracing=True,  # Log every request and tool invocation
+)
+
+app = agent_os.get_app()
+```
+
+Run your FastAPI application using `fastapi dev` and visit **`http://localhost:8000/traces`** to inspect the trace logs in the reliability dashboard.
+
+---
+
+## Workflow Flowchart Generation
+
+Beyond text outputs, Kern can generate visual diagrams from your workflow pipelines. Every `Workflow` has a `.visualize()` method that creates a Mermaid flowchart.
+
+### Generate a Flowchart
+
+```python
+from kern.workflow import Workflow
+from kern.workflow.step import Step, Parallel, Condition
+
+# Define step connections
+workflow = Workflow(
+    name="Content Generation Pipeline",
+    steps=[
+        Step(name="Research", agent=researcher),
+        Parallel(
+            name="Drafting",
+            steps=[
+                Step(name="Draft A", agent=writer),
+                Step(name="Draft B", agent=writer),
+            ]
+        ),
+        Condition(
+            name="Quality Check",
+            condition="score > 8",
+            true_step=Step(name="Publish", agent=publisher),
+            false_step=Step(name="Revise", agent=editor),
+        )
+    ]
+)
+
+# Export as a PNG or SVG image
+workflow.visualize(output_file="pipeline.png", theme="default")
+```
+
+### Visual Themes
+
+You can customize the design of your flowchart by choosing a theme:
+- `"default"`: Colorful nodes that distinguish step types.
+- `"monotone"`: A sleek, single-hue design perfect for reports.
+- `"black"`: A high-contrast theme suited for dark-mode slides and presentations.

@@ -1,0 +1,76 @@
+---
+title: "Basic WhatsApp Agent"
+description: "Create a basic AI agent that integrates with WhatsApp Business API"
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/whatsapp/basic.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+
+agent_db = SqliteDb(db_file="tmp/persistent_memory.db")
+basic_agent = Agent(
+    name="Basic Agent",
+    model=OpenAIChat(id="gpt-4o"),
+    db=agent_db,
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+    markdown=True,
+    instructions=[
+        "You are chatting on WhatsApp. Keep responses conversational and natural.",
+        "Structure your responses as separate short paragraphs separated by double newlines.",
+    ],
+)
+
+agent_os = AgentOS(
+    agents=[basic_agent],
+    interfaces=[Whatsapp(agent=basic_agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="basic:app", reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export WHATSAPP_ACCESS_TOKEN=your_access_token
+    export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+    export WHATSAPP_VERIFY_TOKEN=your_verify_token
+    export WHATSAPP_SKIP_SIGNATURE_VALIDATION=true  # For local dev
+    export OPENAI_API_KEY=your_openai_api_key
+    ```
+
+    See the [WhatsApp Bot setup guide](/deploy/interfaces/whatsapp/overview) for how to get these values from the [Meta Developer Dashboard](https://developers.facebook.com/apps/).
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai openai
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/whatsapp/basic.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **WhatsApp Integration**: Responds to messages via the WhatsApp Business API
+- **Conversation History**: Maintains context with last 3 interactions
+- **Persistent Memory**: SQLite database for session storage
+- **Session Reset**: Users can send `/new` to start a fresh conversation
+- **Markdown Support**: Rich text formatting in messages

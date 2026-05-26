@@ -1,0 +1,53 @@
+---
+title: "Persistent Session Storage"
+description: "Demonstrates using PostgresDb for persistent session storage with a team."
+---
+```python
+"""
+Persistent Session Storage
+==========================
+
+Demonstrates using PostgresDb for persistent session storage with a team.
+"""
+
+from kern.agent.agent import Agent
+from kern.db.postgres import PostgresDb
+from kern.models.openai import OpenAIChat
+from kern.team.team import Team
+
+# ---------------------------------------------------------------------------
+# Setup
+# ---------------------------------------------------------------------------
+db_url = "postgresql+psycopg://ai:ai@localhost:5532/ai"
+db = PostgresDb(db_url=db_url, session_table="sessions")
+
+# ---------------------------------------------------------------------------
+# Create Team
+# ---------------------------------------------------------------------------
+agent = Agent(name="test_agent", model=OpenAIChat(id="gpt-5.2"))
+team = Team(
+    members=[agent],
+    db=db,
+    session_id="team_session_storage",
+    add_history_to_context=True,
+)
+
+# ---------------------------------------------------------------------------
+# Run Team
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    team.print_response("Tell me a new interesting fact about space")
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/06_storage
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python 01_persistent_session_storage.py
+```

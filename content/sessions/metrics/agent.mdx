@@ -1,0 +1,67 @@
+---
+title: Agent Metrics
+sidebarTitle: Overview
+description: Access RunMetrics, MessageMetrics, and SessionMetrics from agent runs.
+keywords: [metrics, agent metrics, run metrics, session metrics]
+---
+
+The **RunOutput** from an agent run includes detailed metrics about token usage, cost, timing, and per-model breakdowns.
+
+```python
+from kern.agent import Agent
+from kern.models.openai import OpenAIResponses
+from kern.tools.hackernews import HackerNewsTools
+from kern.db.sqlite import SqliteDb
+from rich.pretty import pprint
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.2"),
+    tools=[HackerNewsTools()],
+    db=SqliteDb(db_file="tmp/agents.db"),
+    markdown=True,
+)
+
+run_response = agent.run("What are the top stories on HackerNews?")
+
+# Message metrics (MessageMetrics)
+for message in run_response.messages:
+    if message.role == "assistant":
+        pprint(message.metrics.to_dict())
+
+# Run metrics (RunMetrics)
+pprint(run_response.metrics.to_dict())
+
+# Per-model breakdown
+if run_response.metrics.details:
+    for model_type, model_metrics_list in run_response.metrics.details.items():
+        for m in model_metrics_list:
+            print(f"{model_type}: {m.provider}/{m.id} - {m.total_tokens} tokens")
+
+# Session metrics (SessionMetrics)
+pprint(agent.get_session_metrics().to_dict())
+```
+
+Metrics are available at multiple levels:
+- **Per message**: Each assistant message has `MessageMetrics` with per-API-call token counts and timing.
+- **Per run**: Each `RunOutput` has `RunMetrics` with aggregated totals and a `details` breakdown by model type.
+- **Per session**: `agent.get_session_metrics()` returns `SessionMetrics` aggregated across all runs.
+
+| Level | Type | Access |
+|-------|------|--------|
+| Per message | `MessageMetrics` | `message.metrics` |
+| Per run | `RunMetrics` | `run_response.metrics` |
+| Per session | `SessionMetrics` | `agent.get_session_metrics()` |
+
+### Run fields (`RunMetrics`)
+
+<Snippet file="run-metrics-fields.mdx" />
+
+### Message fields (`MessageMetrics`)
+
+<Snippet file="message-metrics-fields.mdx" />
+
+## Developer Resources
+
+- [RunOutput schema](/reference/agents/run-response)
+- [Metrics reference](/reference/run/metrics)
+- [Cookbook](https://github.com/kern-ai/kern/tree/main/cookbook/02_agents/14_advanced/metrics.py)

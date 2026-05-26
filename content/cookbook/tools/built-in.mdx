@@ -1,0 +1,235 @@
+---
+title: Built-in Tools
+description: Ready-to-use tools for search, databases, APIs, social media, and more.
+---
+
+Kern includes 100+ built-in tools. Import, configure, and use.
+
+```python
+from kern.agent import Agent
+from kern.tools.duckduckgo import DuckDuckGoTools
+from kern.tools.yfinance import YFinanceTools
+
+agent = Agent(
+    tools=[
+        DuckDuckGoTools(),
+        YFinanceTools(stock_price=True, analyst_recommendations=True),
+    ],
+)
+
+agent.print_response("What's NVDA's stock price and recent news?")
+```
+
+## Tool Categories
+
+### Search Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| DuckDuckGo | `from kern.tools.duckduckgo import DuckDuckGoTools` | Web search |
+| Tavily | `from kern.tools.tavily import TavilyTools` | AI-optimized search |
+| Exa | `from kern.tools.exa import ExaTools` | Neural search |
+| Brave | `from kern.tools.bravesearch import BraveSearchTools` | Privacy-focused search |
+| Serper | `from kern.tools.serper import SerperTools` | Google search API |
+| SerpAPI | `from kern.tools.serpapi import SerpAPITools` | Search engine results |
+| Wikipedia | `from kern.tools.wikipedia import WikipediaTools` | Wikipedia search |
+| Arxiv | `from kern.tools.arxiv import ArxivTools` | Academic papers |
+| PubMed | `from kern.tools.pubmed import PubMedTools` | Medical literature |
+| HackerNews | `from kern.tools.hackernews import HackerNewsTools` | Tech news |
+
+```python
+from kern.agent import Agent
+from kern.tools.tavily import TavilyTools
+
+agent = Agent(tools=[TavilyTools()])
+agent.print_response("What are the latest developments in quantum computing?")
+```
+
+### Finance Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| YFinance | `from kern.tools.yfinance import YFinanceTools` | Stock data, financials |
+| OpenBB | `from kern.tools.openbb import OpenBBTools` | Financial analysis |
+| Financial Datasets | `from kern.tools.financial_datasets import FinancialDatasetsTools` | SEC filings, earnings |
+
+```python
+from kern.agent import Agent
+from kern.tools.yfinance import YFinanceTools
+
+agent = Agent(
+    tools=[YFinanceTools(
+        stock_price=True,
+        analyst_recommendations=True,
+        company_info=True,
+        historical_prices=True,
+    )],
+)
+agent.print_response("Analyze AAPL's recent performance")
+```
+
+### Database Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| Postgres | `from kern.tools.postgres import PostgresTools` | PostgreSQL queries |
+| DuckDB | `from kern.tools.duckdb import DuckDbTools` | Analytics queries |
+| Neo4j | `from kern.tools.neo4j import Neo4jTools` | Graph database |
+| SQL | `from kern.tools.sql import SQLTools` | Generic SQL |
+| CSV | `from kern.tools.csv_toolkit import CsvTools` | CSV analysis |
+| Pandas | `from kern.tools.pandas import PandasTools` | DataFrame operations |
+| BigQuery | `from kern.tools.google_bigquery import BigQueryTools` | Google BigQuery |
+| Redshift | `from kern.tools.redshift import RedshiftTools` | AWS Redshift |
+
+```python
+from kern.agent import Agent
+from kern.tools.duckdb import DuckDbTools
+
+agent = Agent(tools=[DuckDbTools()])
+agent.print_response("Load sales.csv and show top 10 products by revenue")
+```
+
+### Web Scraping Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| Firecrawl | `from kern.tools.firecrawl import FirecrawlTools` | Web scraping |
+| Crawl4AI | `from kern.tools.crawl4ai import Crawl4AITools` | AI-powered crawling |
+| Newspaper | `from kern.tools.newspaper import NewspaperTools` | Article extraction |
+| Newspaper4k | `from kern.tools.newspaper4k import Newspaper4kTools` | Modern article extraction |
+| Jina | `from kern.tools.jina import JinaTools` | Reader API |
+| Spider | `from kern.tools.spider import SpiderTools` | Fast web crawler |
+| Oxylabs | `from kern.tools.oxylabs import OxylabsTools` | Web scraping proxy |
+| BrightData | `from kern.tools.brightdata import BrightDataTools` | Data collection |
+
+```python
+from kern.agent import Agent
+from kern.tools.firecrawl import FirecrawlTools
+
+agent = Agent(tools=[FirecrawlTools()])
+agent.print_response("Scrape and summarize https://example.com/blog")
+```
+
+### Social & Communication Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| Slack | `from kern.tools.slack import SlackTools` | Slack messaging |
+| Discord | `from kern.tools.discord import DiscordTools` | Discord integration |
+| X (Twitter) | `from kern.tools.x import XTools` | Twitter/X API |
+| Reddit | `from kern.tools.reddit import RedditTools` | Reddit posts |
+| Email | `from kern.tools.email import EmailTools` | Send emails |
+| Gmail | `from kern.tools.gmail import GmailTools` | Gmail integration |
+| Twilio | `from kern.tools.twilio import TwilioTools` | SMS messaging |
+| WhatsApp | `from kern.tools.whatsapp import WhatsAppTools` | WhatsApp messages |
+| Telegram | `from kern.tools.telegram import TelegramTools` | Telegram bot |
+| Webex | `from kern.tools.webex import WebexTools` | Cisco Webex |
+
+```python
+from kern.agent import Agent
+from kern.tools.slack import SlackTools
+
+agent = Agent(tools=[SlackTools()])
+agent.print_response("Send a message to #general saying 'Hello from AI!'")
+```
+
+### Productivity Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| Google Calendar | `from kern.tools.googlecalendar import GoogleCalendarTools` | Calendar events |
+| Google Sheets | `from kern.tools.googlesheets import GoogleSheetsTools` | Spreadsheets |
+| Google Drive | `from kern.tools.google_drive import GoogleDriveTools` | File storage |
+| Notion | `from kern.tools.notion import NotionTools` | Notion pages |
+| Todoist | `from kern.tools.todoist import TodoistTools` | Task management |
+| Trello | `from kern.tools.trello import TrelloTools` | Kanban boards |
+| Linear | `from kern.tools.linear import LinearTools` | Issue tracking |
+| Jira | `from kern.tools.jira import JiraTools` | Project management |
+| Salesforce | `from kern.tools.salesforce import SalesforceTools` | CRM records, SOQL, SOSL |
+| ClickUp | `from kern.tools.clickup import ClickUpTools` | Work management |
+| Confluence | `from kern.tools.confluence import ConfluenceTools` | Documentation |
+| Cal.com | `from kern.tools.calcom import CalComTools` | Scheduling |
+| Zoom | `from kern.tools.zoom import ZoomTools` | Video meetings |
+
+```python
+from kern.agent import Agent
+from kern.tools.googlecalendar import GoogleCalendarTools
+
+agent = Agent(tools=[GoogleCalendarTools()])
+agent.print_response("What meetings do I have tomorrow?")
+```
+
+### Developer Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| GitHub | `from kern.tools.github import GithubTools` | GitHub API |
+| Bitbucket | `from kern.tools.bitbucket import BitbucketTools` | Bitbucket API |
+| Shell | `from kern.tools.shell import ShellTools` | Run shell commands |
+| Python | `from kern.tools.python import PythonTools` | Execute Python |
+| Docker | `from kern.tools.docker import DockerTools` | Container management |
+| File | `from kern.tools.file import FileTools` | File operations |
+| Airflow | `from kern.tools.airflow import AirflowTools` | Workflow orchestration |
+| AWS Lambda | `from kern.tools.aws_lambda import AWSLambdaTools` | Lambda functions |
+| E2B | `from kern.tools.e2b import E2BTools` | Code sandboxes |
+| Daytona | `from kern.tools.daytona import DaytonaTools` | Dev environments |
+
+```python
+from kern.agent import Agent
+from kern.tools.github import GithubTools
+
+agent = Agent(tools=[GithubTools()])
+agent.print_response("List open issues in my repo")
+```
+
+### AI & Media Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| DALL-E | `from kern.tools.dalle import DalleTools` | Image generation |
+| Replicate | `from kern.tools.replicate import ReplicateTools` | ML models |
+| Fal | `from kern.tools.fal import FalTools` | Fast inference |
+| LumaLabs | `from kern.tools.lumalab import LumaLabTools` | 3D generation |
+| ModelsLabs | `from kern.tools.models_labs import ModelsLabsTools` | Model APIs |
+| ElevenLabs | `from kern.tools.eleven_labs import ElevenLabsTools` | Voice synthesis |
+| Cartesia | `from kern.tools.cartesia import CartesiaTools` | Audio generation |
+| MLX Transcribe | `from kern.tools.mlx_transcribe import MLXTranscribeTools` | Local transcription |
+| YouTube | `from kern.tools.youtube import YouTubeTools` | YouTube data |
+| Giphy | `from kern.tools.giphy import GiphyTools` | GIF search |
+| OpenCV | `from kern.tools.opencv import OpenCVTools` | Computer vision |
+
+```python
+from kern.agent import Agent
+from kern.tools.dalle import DalleTools
+
+agent = Agent(tools=[DalleTools()])
+agent.print_response("Generate an image of a futuristic city at sunset")
+```
+
+### Utility Tools
+
+| Tool | Import | Description |
+|------|--------|-------------|
+| Calculator | `from kern.tools.calculator import CalculatorTools` | Math operations |
+| Sleep | `from kern.tools.sleep import SleepTools` | Add delays |
+| Weather | `from kern.tools.openweather import OpenWeatherTools` | Weather data |
+| Maps | `from kern.tools.google_maps import GoogleMapsTools` | Location services |
+| Visualization | `from kern.tools.visualization import VisualizationTools` | Charts and plots |
+| WebBrowser | `from kern.tools.webbrowser import WebBrowserTools` | Browser automation |
+
+## Run Examples
+
+```bash
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook
+
+# Search tools
+python 00_quickstart/agent_with_tools.py
+
+# Finance
+python 02_agents/finance/yfinance_agent.py
+
+# Web scraping
+python 02_agents/web/firecrawl_agent.py
+```
+

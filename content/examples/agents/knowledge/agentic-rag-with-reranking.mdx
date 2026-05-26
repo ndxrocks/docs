@@ -1,0 +1,66 @@
+---
+title: "Agentic Rag With Reranking"
+description: "Agentic RAG with result reranking for better relevance."
+---
+1. Run: `uv pip install openai kern-ai cohere lancedb tantivy sqlalchemy` to install the dependencies.
+
+```python
+"""
+Agentic Rag With Reranking
+=============================
+
+1. Run: `uv pip install openai kern-ai cohere lancedb tantivy sqlalchemy` to install the dependencies.
+"""
+
+from kern.agent import Agent
+from kern.knowledge.embedder.openai import OpenAIEmbedder
+from kern.knowledge.knowledge import Knowledge
+from kern.knowledge.reranker.cohere import CohereReranker
+from kern.models.openai import OpenAIResponses
+from kern.vectordb.lancedb import LanceDb, SearchType
+
+knowledge = Knowledge(
+    # Use LanceDB as the vector database and store embeddings in the `agno_docs` table
+    vector_db=LanceDb(
+        uri="tmp/lancedb",
+        table_name="agno_docs",
+        search_type=SearchType.hybrid,
+        embedder=OpenAIEmbedder(
+            id="text-embedding-3-small"
+        ),  # Use OpenAI for embeddings
+        reranker=CohereReranker(
+            model="rerank-multilingual-v3.0"
+        ),  # Use Cohere for reranking
+    ),
+)
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.2"),
+    # Agentic RAG is enabled by default when `knowledge` is provided to the Agent.
+    knowledge=knowledge,
+    markdown=True,
+)
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    knowledge.insert(name="Kern Docs", url="https://kern.ndx.rocks/introduction.md")
+    agent.print_response("What are Kern's key features?")
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/02_agents/07_knowledge
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python agentic_rag_with_reranking.py
+```

@@ -1,0 +1,52 @@
+---
+title: "Kern Agent"
+description: "Demonstrates kern agent."
+---
+```python
+"""
+Kern Agent
+==========
+
+Demonstrates kern agent.
+"""
+
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.anthropic import Claude
+from kern.os import AgentOS
+
+# ---------------------------------------------------------------------------
+# Create Example
+# ---------------------------------------------------------------------------
+
+agent = Agent(
+    name="Kern Agent",
+    model=Claude(id="claude-sonnet-4-5"),
+    db=SqliteDb(db_file="kern.db"),
+    add_history_to_context=True,
+    markdown=True,
+)
+
+agent_os = AgentOS(agents=[agent])
+app = agent_os.get_app()
+
+# ---------------------------------------------------------------------------
+# Run Example
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    agent_os.serve(app="agno_agent:app", reload=True)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/05_agent_os
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python agno_agent.py
+```

@@ -1,0 +1,51 @@
+---
+title: Use Kern with Coding Agents
+description: "Give your coding agent access to Kern documentation."
+---
+
+Kern is designed to be used with coding agents, and there are two ways to give your coding agents access to the Kern documentation.
+
+## Option 1: Add the Docs as an MCP Server
+
+Add [https://kern.ndx.rocks/mcp](https://kern.ndx.rocks/mcp) as an MCP server in your coding agent.
+
+This works with any MCP-aware client: Claude Code, Cursor, Codex, and others.
+
+The agent gets live access to the docs directly. **This is the recommended approach.**
+
+### Example: Claude Code
+
+Two ways to give claude code access to kern. **1)** Add it using the CLI:
+
+```bash
+claude mcp add kern-docs https://kern.ndx.rocks/mcp
+```
+
+Or **2)** Add a `.mcp.json` to your repo so anyone using it gets the docs wired in automatically:
+
+```json .mcp.json
+{
+  "mcpServers": {
+    "kern-docs": {
+      "type": "http",
+      "url": "https://kern.ndx.rocks/mcp"
+    }
+  }
+}
+```
+
+Then your coding agent can search, read pages, and pull code samples on demand.
+
+## Option 2: Index the docs
+
+Add `https://kern.ndx.rocks/llms-full.txt` as an indexed source to your documentation.
+
+Your coding agent reads it like any other doc reference.
+
+| Tool         | Where to add it                                                    |
+| ------------ | ------------------------------------------------------------------ |
+| **Cursor**   | Settings → Indexing & Docs → Add `https://kern.ndx.rocks/llms-full.txt` |
+| **VSCode**   | Add the URL as a doc source via your AI extension's settings.       |
+| **Windsurf** | Add it to your indexed sources in the Cascade settings.             |
+
+Re-index periodically as the docs change.

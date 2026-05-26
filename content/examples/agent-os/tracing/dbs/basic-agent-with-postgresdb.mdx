@@ -1,0 +1,63 @@
+---
+title: "Traces with AgentOS"
+description: "Requirements: uv pip install kern-ai opentelemetry-api opentelemetry-sdk openinference-instrumentation-kern-ai."
+---
+Requirements: uv pip install kern-ai opentelemetry-api opentelemetry-sdk openinference-instrumentation-kern-ai
+
+```python
+"""
+Traces with AgentOS
+Requirements:
+    uv pip install kern-ai opentelemetry-api opentelemetry-sdk openinference-instrumentation-kern-ai
+"""
+
+from kern.agent import Agent
+from kern.db.postgres import PostgresDb
+from kern.models.openai import OpenAIChat
+from kern.os import AgentOS
+from kern.tools.hackernews import HackerNewsTools
+
+# ---------------------------------------------------------------------------
+# Create Example
+# ---------------------------------------------------------------------------
+
+# Set up database
+db = PostgresDb(db_url="postgresql+psycopg://ai:ai@localhost:5532/ai")
+
+agent = Agent(
+    name="HackerNews Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    tools=[HackerNewsTools()],
+    instructions="You are a hacker news agent. Answer questions concisely.",
+    markdown=True,
+    db=db,
+)
+
+# Setup our AgentOS app
+agent_os = AgentOS(
+    description="Example app for tracing HackerNews",
+    agents=[agent],
+    tracing=True,
+)
+app = agent_os.get_app()
+
+# ---------------------------------------------------------------------------
+# Run Example
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    agent_os.serve(app="basic_agent_with_postgresdb:app", reload=True)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/05_agent_os/tracing/dbs
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python basic_agent_with_postgresdb.py
+```

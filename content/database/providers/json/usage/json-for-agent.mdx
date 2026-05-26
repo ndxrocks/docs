@@ -1,0 +1,33 @@
+---
+title: JSON for Agent
+sidebarTitle: Agent
+---
+
+Kern supports using local JSON files as a storage backend for Agents using the `JsonDb` class.
+
+## Usage
+
+```python json_for_agent.py
+"""Run `uv pip install openai` to install dependencies."""
+
+from kern.agent import Agent
+from kern.db.json import JsonDb
+from kern.models.openai import OpenAIResponses
+from kern.tools.hackernews import HackerNewsTools
+
+# Setup the JSON database
+db = JsonDb(db_path="tmp/json_db")
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.2"),
+    db=db,
+    tools=[HackerNewsTools()],
+    add_history_to_context=True,
+)
+agent.print_response("How many people live in Canada?")
+agent.print_response("What is their national anthem called?")
+```
+
+## Params
+
+<Snippet file="db-json-params.mdx" />

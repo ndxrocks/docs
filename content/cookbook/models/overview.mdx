@@ -1,0 +1,106 @@
+---
+title: Model Examples
+sidebarTitle: Overview
+description: 700+ examples across 40+ LLM providers. Same Agent code, use any model.
+---
+
+Kern's model abstraction lets you switch providers with one line of code. Every example works with the same Agent interface.
+
+```python
+from kern.agent import Agent
+from kern.models.openai import OpenAIResponses
+from kern.models.anthropic import Claude
+from kern.models.google import Gemini
+
+# Same agent code, different models
+agent = Agent(model=OpenAIResponses(id="gpt-5.2"))
+agent = Agent(model=Claude(id="claude-sonnet-4-5"))
+agent = Agent(model=Gemini(id="gemini-3-flash-preview"))
+```
+
+## Provider Categories
+
+<CardGroup cols={3}>
+  <Card title="OpenAI" icon="microchip" href="/cookbook/models/openai">
+    GPT models with tools, vision, audio, and reasoning.
+  </Card>
+  <Card title="Anthropic" icon="brain" href="/cookbook/models/anthropic">
+    Sonnet and Opus with extended thinking and prompt caching.
+  </Card>
+  <Card title="Google" icon="google" href="/cookbook/models/google">
+    Gemini with native video, audio, search, and Imagen generation.
+  </Card>
+  <Card title="Open Source" icon="code-branch" href="/cookbook/models/open-source/groq">
+    Llama, Mistral, DeepSeek via Groq, Together, Fireworks.
+  </Card>
+  <Card title="Enterprise" icon="building" href="/cookbook/models/enterprise/azure">
+    Azure OpenAI, AWS Bedrock, Vertex AI, NVIDIA, IBM watsonx.
+  </Card>
+  <Card title="Local" icon="server" href="/cookbook/models/local/ollama">
+    Ollama, vLLM, LMStudio for private, offline inference.
+  </Card>
+</CardGroup>
+
+## All Providers
+
+| Provider | Import |
+|----------|--------|
+| OpenAI | `from kern.models.openai import OpenAIResponses` |
+| Anthropic | `from kern.models.anthropic import Claude` |
+| Google | `from kern.models.google import Gemini` |
+| xAI | `from kern.models.xai import xAI` |
+| Perplexity | `from kern.models.perplexity import Perplexity` |
+| Groq | `from kern.models.groq import Groq` |
+| DeepSeek | `from kern.models.deepseek import DeepSeek` |
+| Mistral | `from kern.models.mistral import MistralChat` |
+| Together | `from kern.models.together import Together` |
+| Fireworks | `from kern.models.fireworks import Fireworks` |
+| Cohere | `from kern.models.cohere import CohereChat` |
+| Cerebras | `from kern.models.cerebras import Cerebras` |
+| Azure OpenAI | `from kern.models.azure import AzureOpenAI` |
+| Azure AI Foundry | `from kern.models.azure import AzureAIFoundry` |
+| AWS Bedrock | `from kern.models.aws import BedrockChat` |
+| Vertex AI | `from kern.models.vertexai import VertexAI` |
+| NVIDIA | `from kern.models.nvidia import NVIDIAChat` |
+| IBM watsonx | `from kern.models.ibm import WatsonX` |
+| Ollama | `from kern.models.ollama import Ollama` |
+| vLLM | `from kern.models.vllm import vLLM` |
+| LMStudio | `from kern.models.lmstudio import LMStudio` |
+| llama.cpp | `from kern.models.llamacpp import LlamaCpp` |
+| LiteLLM | `from kern.models.litellm import LiteLLM` |
+| OpenRouter | `from kern.models.openrouter import OpenRouter` |
+| Portkey | `from kern.models.portkey import Portkey` |
+
+## Quick Start
+
+```python
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+
+agent = Agent(
+    model=Claude(id="claude-sonnet-4-5"),
+    instructions=["Be concise"],
+    markdown=True,
+)
+
+agent.print_response("What is quantum computing?", stream=True)
+```
+
+## Run Examples
+
+```bash
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/90_models
+
+# Set API key for your provider
+export OPENAI_API_KEY=xxx
+export ANTHROPIC_API_KEY=xxx
+export GOOGLE_API_KEY=xxx
+
+# Run examples
+python openai/responses/basic.py
+python anthropic/basic.py
+python google/gemini/basic.py
+```
+
+View all examples in the [cookbook on GitHub](https://github.com/kern-ai/kern/tree/main/cookbook/90_models).

@@ -1,0 +1,94 @@
+---
+title: "WhatsApp Agent with User Memory"
+description: "Personalized WhatsApp agent that remembers user information and preferences"
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/whatsapp/agent_with_user_memory.py
+from textwrap import dedent
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.memory.manager import MemoryManager
+from kern.models.google import Gemini
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+from kern.tools.hackernews import HackerNewsTools
+
+agent_db = SqliteDb(db_file="tmp/persistent_memory.db")
+
+memory_manager = MemoryManager(
+    memory_capture_instructions="""\
+                    Collect User's name,
+                    Collect Information about user's passion and hobbies,
+                    Collect Information about the users likes and dislikes,
+                    Collect information about what the user is doing with their life right now
+                """,
+    model=Gemini(id="gemini-2.5-flash"),
+)
+
+personal_agent = Agent(
+    name="Basic Agent",
+    model=Gemini(id="gemini-2.5-flash"),
+    tools=[HackerNewsTools()],
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+    markdown=True,
+    db=agent_db,
+    memory_manager=memory_manager,
+    enable_agentic_memory=True,
+    instructions=dedent("""
+        You are a personal AI friend of the user, your purpose is to chat with the user about things and make them feel good.
+        First introduce yourself and ask for their name then, ask about themeselves, their hobbies, what they like to do and what they like to talk about.
+        Use the HackerNews tools to find latest information about things in the conversations
+                        """),
+)
+
+agent_os = AgentOS(
+    agents=[personal_agent],
+    interfaces=[Whatsapp(agent=personal_agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agent_with_user_memory:app", reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export WHATSAPP_ACCESS_TOKEN=your_access_token
+    export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+    export WHATSAPP_VERIFY_TOKEN=your_verify_token
+    export WHATSAPP_SKIP_SIGNATURE_VALIDATION=true  # For local dev
+    export GOOGLE_API_KEY=your_google_api_key
+    ```
+
+    See the [WhatsApp Bot setup guide](/deploy/interfaces/whatsapp/overview) for how to get these values from the [Meta Developer Dashboard](https://developers.facebook.com/apps/).
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai google-generativeai
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/whatsapp/agent_with_user_memory.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Memory Management**: Remembers user names, hobbies, preferences, and activities
+- **HackerNews**: Access to current information during conversations
+- **Personalized Responses**: Uses stored memories for contextualized replies
+- **Friendly AI**: Acts as personal AI friend with engaging conversation
+- **Gemini Powered**: Fast, intelligent responses with multimodal capabilities

@@ -1,0 +1,66 @@
+---
+title: "Redis With Cohere Reranker"
+description: "Demonstrates Redis vector retrieval with Cohere reranking."
+---
+```python
+"""
+Redis With Cohere Reranker
+==========================
+
+Demonstrates Redis vector retrieval with Cohere reranking.
+"""
+
+from kern.agent import Agent
+from kern.knowledge.embedder.openai import OpenAIEmbedder
+from kern.knowledge.knowledge import Knowledge
+from kern.knowledge.reranker.cohere import CohereReranker
+from kern.models.openai import OpenAIChat
+from kern.vectordb.redis import RedisDB
+
+# ---------------------------------------------------------------------------
+# Create Knowledge Base
+# ---------------------------------------------------------------------------
+knowledge = Knowledge(
+    vector_db=RedisDB(
+        index_name="agno_docs",
+        redis_url="redis://localhost:6379",
+        embedder=OpenAIEmbedder(id="text-embedding-3-small"),
+        reranker=CohereReranker(model="rerank-multilingual-v3.0"),
+    ),
+)
+
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+agent = Agent(
+    model=OpenAIChat(id="gpt-5.2"),
+    knowledge=knowledge,
+    markdown=True,
+)
+
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+def main() -> None:
+    knowledge.insert(name="Kern Docs", url="https://kern.ndx.rocks/introduction.md")
+    agent.print_response("What are Kern's key features?")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/07_knowledge/vector_db/redis_db
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python redis_db_with_cohere_reranker.py
+```

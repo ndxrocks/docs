@@ -1,0 +1,115 @@
+---
+title: Crafting Your Agent 🛠️
+sidebarTitle: Building Agents
+description: "Three ingredients make a great agent: a local model, custom tools, and solid instructions."
+keywords: [agent, agents, ai agents, introduction]
+mode: wide
+---
+
+Building agents doesn't need to be over-engineered. We recommend starting with a simple recipe: a model, some tools, and direct instructions. Once the basics are humming, you can layer in memory, databases, and structured schemas.
+
+Here's the simplest agent with access to HackerNews, connected to a local Ollama server running Llama 3.2 3B:
+
+```python hackernews_agent.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.hackernews import HackerNewsTools
+
+# Let's boot up our local-first helper 🤖
+agent = Agent(
+    model=OpenAIChat(
+        id="llama3.2:3b",
+        base_url="http://localhost:11434/v1",  # Hello, Ollama! 👋
+    ),
+    tools=[HackerNewsTools()],
+    instructions="You are a tech journalist. Keep summaries brief and facts straight.",
+    markdown=True,
+)
+
+# Run and stream the output directly to the terminal! 🚀
+agent.print_response("What are the trending startups today?", stream=True)
+```
+
+---
+
+## 🏃 Running Your Agent
+
+During development, `Agent.print_response()` is your best friend. It formats the markdown beautifully and prints it directly to your terminal.
+
+For production or custom interfaces, use `Agent.run()` or `Agent.arun()` (the async version) to retrieve the structured stream:
+
+```python
+from typing import Iterator
+from kern.agent import Agent, RunOutputEvent, RunEvent
+from kern.models.openai import OpenAIChat
+from kern.tools.hackernews import HackerNewsTools
+
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=[HackerNewsTools()],
+    instructions="Write a report on the topic. Output only the report.",
+    markdown=True,
+)
+
+# Stream the event outputs
+stream: Iterator[RunOutputEvent] = agent.run("Trending tech news", stream=True)
+for chunk in stream:
+    if chunk.event == RunEvent.run_content:
+         print(chunk.content, end="", flush=True)
+```
+
+---
+
+## 💡 Dynamic Tools (Callable Factories)
+
+What if you don't want the exact same tools for every session? For example, admins should get file editing access, while standard users only get web search.
+
+Instead of passing a static list, pass a **callable function**! Kern calls this function at the start of each run, allowing you to customize the tools or knowledge based on the user session. 🤯
+
+```python callable_tools.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.run import RunContext
+from kern.tools.duckduckgo import DuckDuckGoTools
+from kern.tools.yfinance import YFinanceTools
+
+# Determine tools on the fly ✈️
+def get_tools_for_user(run_context: RunContext):
+    role = (run_context.session_state or {}).get("role", "general")
+    if role == "finance":
+        return [YFinanceTools()]
+    return [DuckDuckGoTools()]
+
+# Wire up the dynamic tool factory
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=get_tools_for_user,
+)
+
+# This run gets financial tools 📈
+agent.print_response("AAPL stock price?", session_state={"role": "finance"}, stream=True)
+
+# This run gets general web search 🌐
+agent.print_response("Latest AI news?", session_state={"role": "general"}, stream=True)
+```
+
+### ⚙️ Callable Caching Settings
+
+<Snippet file="concept-callable-factories-caching.mdx" />
+
+---
+
+## 🗺️ Next Steps
+
+Ready to upgrade your agent's capabilities? Explore the guides below:
+
+| What do you want to add? | Where to go next |
+| :--- | :--- |
+| **Execution** | [Running agents 🏃](/agents/running-agents) |
+| **Troubleshooting** | [Debugging agents 🐛](/agents/debugging-agents) |
+| **Persistence** | [Agent sessions 💾](/sessions/overview) |
+| **Output Formats** | [Input and output 📊](/input-output/overview) |
+| **Extra Abilities** | [Custom & Pre-built Tools 🛠️](/tools/overview) |
+| **Context Control** | [Context engineering 🧠](/context/overview) |
+| **Files & Media** | [Multimodal inputs 🖼️](/multimodal/overview) |
+| **Safety Net** | [Guardrails 🛡️](/guardrails/overview) |

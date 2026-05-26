@@ -1,0 +1,65 @@
+---
+title: "Arize Phoenix Local Via OpenInference"
+description: "Demonstrates instrumenting an Kern agent and sending traces to a local Phoenix instance."
+---
+```python
+"""
+Arize Phoenix Local Via OpenInference
+=====================================
+
+Demonstrates instrumenting an Kern agent and sending traces to a local Phoenix instance.
+"""
+
+import os
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.yfinance import YFinanceTools
+from phoenix.otel import register
+
+# ---------------------------------------------------------------------------
+# Setup
+# ---------------------------------------------------------------------------
+os.environ["PHOENIX_COLLECTOR_ENDPOINT"] = "http://localhost:6006"
+
+# Configure the Phoenix tracer
+tracer_provider = register(
+    project_name="kern-stock-price-agent",  # Default is 'default'
+    auto_instrument=True,  # Automatically use the installed OpenInference instrumentation
+)
+
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+agent = Agent(
+    name="Stock Price Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    tools=[YFinanceTools()],
+    instructions="You are a stock price agent. Answer questions in the style of a stock analyst.",
+    debug_mode=True,
+)
+
+
+# ---------------------------------------------------------------------------
+# Run Example
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response("What is the current price of Tesla?")
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/92_integrations/observability
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+# Export relevant API keys
+export PHOENIX_COLLECTOR_ENDPOINT="***"
+
+python arize_phoenix_via_openinference_local.py
+```

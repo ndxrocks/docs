@@ -1,0 +1,209 @@
+---
+title: Getting Started
+description: 'Install Kern and run your first local agent in 5 minutes.'
+---
+
+Kern is a Python framework for building AI agents optimized for **small language models (1-7B parameters)**. It gives you structured outputs, automatic JSON repair, tool use, and workflow orchestration out of the box—all designed to work reliably with models running on your laptop.
+
+## Prerequisites
+
+1. **Python 3.9+** (Python 3.11 or 3.12 is recommended for best performance).
+2. **An OpenAI-Compatible Model Server** (Ollama, llama.cpp, vLLM, or LM Studio running locally).
+
+### Supported Local Servers
+
+Kern connects to any server that exposes an OpenAI-compatible chat completions endpoint.
+
+| Server | Default Base URL | Example Models | Param Range |
+| :--- | :--- | :--- | :--- |
+| **Ollama** | `http://localhost:11434/v1` | `llama3.2:1b`, `llama3.2:3b`, `phi4-mini` | 1-4B |
+| **llama.cpp server** | `http://localhost:8080/v1` | Any GGUF model | 1-7B |
+| **vLLM** | `http://localhost:8000/v1` | Any HuggingFace model | 1-7B |
+| **LM Studio** | `http://localhost:1234/v1` | Any GGUF from UI | 1-7B |
+
+---
+
+## Installation
+
+Install Kern from PyPI:
+
+```bash
+pip install kern-ai
+```
+
+You can also install optional extras for tools and development dependencies:
+
+```bash
+# Install with optional extras
+pip install 'kern-ai[tools]'       # DuckDuckGo, Calculator, and built-in tools
+pip install 'kern-ai[all]'         # Everything including extras and dev tools
+```
+
+Verify your installation:
+
+```python
+import kern
+print(kern.__version__)
+```
+
+---
+
+## Your First Agent
+
+Create a file `agent.py` to run a basic agent that connects to a local model server (e.g. llama.cpp running on port 8080):
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+agent = Agent(
+    model=OpenAIChat(
+        id="local-model",
+        base_url="http://localhost:8080/v1",
+    ),
+    description="You are a helpful assistant optimized for concise answers.",
+)
+
+result = agent.run("What is quantum computing?")
+print(result.content)
+```
+
+### What just happened?
+1. **`OpenAIChat`** connects to your local model server using the standard OpenAI-compatible completions API.
+2. **`description`** sets the system prompt. For small models, keep instructions short, specific, and focused on one task.
+3. **`agent.run()`** sends the prompt, handles response parsing, and returns a `RunOutput` containing the response text and usage metadata.
+
+---
+
+## Connecting to Model Providers
+
+### Ollama (Local)
+Ollama is the easiest way to run small models locally. Pull a model and run:
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+# Connect to Ollama running a small model
+agent = Agent(
+    model=OpenAIChat(
+        id="llama3.2:3b",
+        base_url="http://localhost:11434/v1",
+    ),
+    description="You are a helpful research assistant.",
+)
+
+result = agent.run("Explain how neural networks learn")
+print(result.content)
+```
+
+### Cloud Providers
+Kern works with cloud APIs too. Just omit the `base_url` to use OpenAI's default endpoint, or set the `OPENAI_API_KEY` environment variable.
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    description="You are a helpful assistant.",
+)
+
+result = agent.run("Summarize the benefits of small language models")
+print(result.content)
+```
+
+---
+
+## Streaming Responses
+
+For interactive applications, use `agent.run_stream()` to receive tokens as they arrive:
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+agent = Agent(
+    model=OpenAIChat(
+        id="local-model",
+        base_url="http://localhost:8080/v1",
+    ),
+    description="You are a creative writing assistant.",
+)
+
+# Stream tokens as they arrive
+for chunk in agent.run_stream("Write a short poem about debugging"):
+    print(chunk.content, end="", flush=True)
+```
+
+---
+
+## Structured Output
+
+Instead of sending raw JSON Schema to the model (which confuses models under 7B parameters), Kern generates **fill-in-the-blank templates** that the model can complete reliably. Define a Pydantic model and pass it as `output_schema`:
+
+```python
+from pydantic import BaseModel, Field
+from typing import Literal
+from kern import Agent
+from kern.models.openai import OpenAIChat
+
+class ArticleAnalysis(BaseModel):
+    title: str = Field(description="Article title")
+    summary: str = Field(description="2-3 sentence summary")
+    sentiment: Literal["positive", "negative", "neutral"]
+    confidence: float = Field(description="Confidence score from 0.0 to 1.0")
+    key_topics: list[str] = Field(description="List of 3-5 key topics")
+
+agent = Agent(
+    model=OpenAIChat(
+        id="local-model",
+        base_url="http://localhost:8080/v1",
+    ),
+    description="You are a news analyst.",
+    output_schema=ArticleAnalysis,
+)
+
+result = agent.run("Analyze this article about renewable energy adoption")
+print(result.content.title)
+print(result.content.sentiment)
+print(result.content.key_topics)
+```
+
+If the model produces slightly malformed JSON, Kern's built-in repair engine fixes missing brackets or commentary automatically.
+
+---
+
+## Adding Tools
+
+Pass built-in tools (like web search or a calculator) or custom python functions to the agent:
+
+### Custom Python Tools
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools import Tool
+
+def get_weather(city: str) -> str:
+    """Get current weather for a city."""
+    return f"Weather in {city}: 22C, partly cloudy"
+
+weather_tool = Tool(
+    name="get_weather",
+    description="Get current weather for a given city",
+    func=get_weather,
+)
+
+agent = Agent(
+    model=OpenAIChat(
+        id="local-model",
+        base_url="http://localhost:8080/v1",
+    ),
+    description="You are a helpful weather assistant.",
+    tools=[weather_tool],
+)
+
+result = agent.run("What is the weather in Tokyo?")
+print(result.content)
+```

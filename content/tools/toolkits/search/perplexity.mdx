@@ -1,0 +1,79 @@
+---
+title: Perplexity
+description: "Search the web with filtering, recency, and domain restrictions using Perplexity Search API."
+---
+
+**PerplexitySearch** enables an Agent to search the web using the Perplexity Search API and return ranked results with titles, URLs, snippets, and publication dates.
+
+## Prerequisites
+
+The following example requires the `httpx` library and an API key from [Perplexity](https://console.perplexity.ai/).
+
+```shell
+uv pip install -U httpx
+```
+
+```shell
+export PERPLEXITY_API_KEY=***
+```
+
+## Examples
+
+Basic search:
+
+```python
+from kern.agent import Agent
+from kern.tools.perplexity import PerplexitySearch
+
+agent = Agent(tools=[PerplexitySearch()], markdown=True)
+agent.print_response("What are the latest developments in AI?")
+```
+
+Search with filters (news from the past week, specific domains):
+
+```python
+agent_filtered = Agent(
+    tools=[
+        PerplexitySearch(
+            max_results=10,
+            search_recency_filter="week",
+            search_domain_filter=["cnbc.com", "reuters.com", "bloomberg.com"],
+        )
+    ],
+    markdown=True,
+)
+agent_filtered.print_response("Latest AI industry developments")
+```
+
+## When to Use
+
+Use PerplexitySearch when you need:
+- Current, ranked web search results with publication dates
+- Filtering by recency (past day, week, month, or year)
+- Restriction to specific domains or languages
+- Integration with agents that need up-to-date information
+
+## Toolkit Params
+
+| Parameter                | Type                    | Default  | Description                                                                          |
+| ------------------------ | ----------------------- | -------- | ------------------------------------------------------------------------------------ |
+| `api_key`                | `Optional[str]`         | `None`   | Perplexity API key. If not provided, uses PERPLEXITY_API_KEY environment variable.   |
+| `max_results`            | `int`                   | `5`      | Maximum number of results to return per query.                                       |
+| `max_tokens_per_page`    | `int`                   | `2048`   | Maximum content length per result in tokens.                                         |
+| `search_recency_filter`  | `Optional[str]`         | `None`   | Filter results by recency: `day`, `week`, `month`, or `year`.                        |
+| `search_domain_filter`   | `Optional[List[str]]`   | `None`   | List of domains to restrict search results to.                                       |
+| `search_language_filter` | `Optional[List[str]]`   | `None`   | List of ISO language codes to filter results by language.                             |
+| `show_results`           | `bool`                  | `False`  | Log search results for debugging.                                                    |
+
+## Toolkit Functions
+
+| Function  | Description                                                                                                                                                     |
+| --------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search`  | Search the web using the Perplexity Search API. Takes a `query` (str) and optional `max_results` (int). Returns a JSON array of results with url, title, snippet, and date. |
+| `asearch` | Async variant of `search`. Uses `httpx.AsyncClient` for non-blocking requests.                                                                                  |
+
+## Developer Resources
+
+- View [Example](https://github.com/kern-ai/kern/blob/main/cookbook/91_tools/perplexity_tools.py)
+- [PerplexitySearch source](https://github.com/kern-ai/kern/blob/main/libs/kern/kern/tools/perplexity.py)
+- [Perplexity API docs](https://docs.perplexity.ai/)

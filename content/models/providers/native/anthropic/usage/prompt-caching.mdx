@@ -1,0 +1,144 @@
+---
+title: Prompt Caching
+description: Cache system prompts to reduce processing time and costs with Anthropic models.
+---
+
+Prompt caching can help reducing processing time and costs. Consider it if you are using the same prompt multiple times in any flow.
+
+You can read more about prompt caching with Anthropic models [here](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching).
+
+## Usage
+
+To use prompt caching in your Kern setup, pass the `cache_system_prompt` argument when initializing the `Claude` model:
+
+```python
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+
+agent = Agent(
+    model=Claude(
+        id="claude-3-5-sonnet-20241022",
+        cache_system_prompt=True,
+    ),
+)
+```
+
+Notice that for prompt caching to work, the prompt needs to be of a certain length. You can read more about this on Anthropic's [docs](https://docs.anthropic.com/en/docs/build-with-claude/prompt-caching#cache-limitations).
+
+## Extended cache
+
+You can also use Anthropic's extended cache beta feature. This updates the cache duration from 5 minutes to 1 hour. To activate it, pass the `extended_cache_time` argument and the following beta header:
+
+```python
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+
+agent = Agent(
+    model=Claude(
+        id="claude-3-5-sonnet-20241022",
+        betas=["extended-cache-ttl-2025-04-11"],
+        cache_system_prompt=True,
+        extended_cache_time=True,
+    ),
+)
+```
+
+## Multi-block caching with per-block TTL
+
+Split the system prompt into independently-cacheable blocks with `system_prompt_blocks`. Each `SystemPromptBlock` controls its own `cache` flag and `ttl`. This lets you cache static instructions while leaving dynamic per-request content uncached.
+
+```python cookbook/11_models/anthropic/prompt_caching_multi_block.py
+from datetime import datetime
+from kern.agent import Agent
+from kern.models.anthropic import Claude, SystemPromptBlock
+
+blocks = [
+    # Static instructions, cached for 1 hour
+    SystemPromptBlock(
+        text="You are a senior software architect. Give concise, opinionated advice.",
+        cache=True,
+        ttl="1h",
+    ),
+    # Dynamic per-request context, never cached
+    SystemPromptBlock(
+        text=f"Current time: {datetime.now().isoformat()}",
+        cache=False,
+    ),
+]
+
+agent = Agent(
+    model=Claude(
+        id="claude-sonnet-4-5-20250929",
+        cache_system_prompt=True,
+        extended_cache_time=True,
+        system_prompt_blocks=blocks,
+    ),
+    markdown=True,
+)
+```
+
+Blocks are appended after the agent-built system message in the Anthropic `system` array. `system_prompt_blocks` may also be a zero-arg callable that returns the list, evaluated on every request, which is how you inject dynamic content into a cached prompt without reinstantiating the model.
+
+| `SystemPromptBlock` field | Type | Default | Description |
+|---------------------------|------|---------|-------------|
+| `text` | `str` | required | The block content. |
+| `cache` | `bool` | `True` | Add `cache_control` to this block. Independent of `cache_system_prompt`. |
+| `ttl` | `Optional["5m" \| "1h"]` | `None` | Per-block TTL. Overrides the model-level `extended_cache_time` for this block. |
+
+<Warning>
+Anthropic requires any `1h` cached block to appear before any `5m` block in the request. Since the agent-built block comes first and inherits the model-level TTL, set `extended_cache_time=True` whenever any `SystemPromptBlock` uses `ttl="1h"`. Kern validates this ordering at assembly time and raises a clear error if it is violated.
+</Warning>
+
+## Tool caching
+
+Set `cache_tools=True` to cache tool definitions. Anthropic caches all tools as a prefix when `cache_control` is on the last tool.
+
+```python
+agent = Agent(
+    model=Claude(
+        id="claude-sonnet-4-5-20250929",
+        cache_tools=True,
+    ),
+    tools=[...],
+)
+```
+
+## Working example
+
+```python cookbook/11_models/anthropic/prompt_caching_extended.py
+from pathlib import Path
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+from kern.utils.media import download_file
+
+# Load an example large system message from S3. A large prompt like this would benefit from caching.
+txt_path = Path(__file__).parent.joinpath("system_prompt.txt")
+download_file(
+    "https://kern-public.s3.amazonaws.com/prompts/system_promt.txt",
+    str(txt_path),
+)
+system_message = txt_path.read_text()
+
+agent = Agent(
+    model=Claude(
+        id="claude-sonnet-4-20250514",
+        cache_system_prompt=True,  # Activate prompt caching for Anthropic to cache the system prompt
+    ),
+    system_message=system_message,
+    markdown=True,
+)
+
+# First run - this will create the cache
+response = agent.run(
+    "Explain the difference between REST and GraphQL APIs with examples"
+)
+if response and response.metrics:
+    print(f"First run cache write tokens = {response.metrics.cache_write_tokens}")
+
+# Second run - this will use the cached system prompt
+response = agent.run(
+    "What are the key principles of clean code and how do I apply them in Python?"
+)
+if response and response.metrics:
+    print(f"Second run cache read tokens = {response.metrics.cache_read_tokens}")
+```

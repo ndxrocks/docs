@@ -1,0 +1,75 @@
+---
+title: Agentic RAG with Reranking
+---
+
+## Code
+
+```python
+from kern.agent import Agent
+from kern.knowledge.embedder.openai import OpenAIEmbedder
+from kern.knowledge.knowledge import Knowledge
+from kern.knowledge.reranker.cohere import CohereReranker
+from kern.models.openai import OpenAIResponses
+from kern.vectordb.lancedb import LanceDb, SearchType
+
+knowledge = Knowledge(
+    vector_db=LanceDb(
+        uri="tmp/lancedb",
+        table_name="agno_docs",
+        search_type=SearchType.hybrid,
+        embedder=OpenAIEmbedder(
+            id="text-embedding-3-small"
+        ),
+        reranker=CohereReranker(
+            model="rerank-multilingual-v3.0"
+        ),
+    ),
+)
+
+knowledge.insert(
+    name="Kern Docs", url="https://kern.ndx.rocks/introduction.md"
+)
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.2"),
+    knowledge=knowledge,
+    markdown=True,
+)
+
+if __name__ == "__main__":
+    # Load the knowledge base, comment after first run
+    # agent.knowledge.load(recreate=True)
+    agent.print_response("What are Kern's key features?")
+
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set your API keys">
+    ```bash
+    export OPENAI_API_KEY=xxx
+    export COHERE_API_KEY=xxx
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U openai lancedb tantivy pypdf sqlalchemy kern-ai cohere
+    ```
+  </Step>
+
+  <Step title="Run Agent">
+    <CodeGroup>
+    ```bash Mac
+    python cookbook/03_agents/rag/agentic_rag_with_reranking.py
+    ```
+
+    ```bash Windows
+    python cookbook/03_agents/rag/agentic_rag_with_reranking.py
+    ```
+    </CodeGroup>
+  </Step>
+</Steps>

@@ -1,0 +1,69 @@
+---
+title: "Agent with Tools"
+description: "Investment analyst agent with financial tools and web interface"
+---
+
+## Code
+
+```python cookbook/05_agent_os/interfaces/agui/agent_with_tools.py
+from kern.agent.agent import Agent
+from kern.models.openai import OpenAIResponses
+from kern.os import AgentOS
+from kern.os.interfaces.agui import AGUI
+from kern.tools.yfinance import YFinanceTools
+
+agent = Agent(
+    model=OpenAIResponses(id="gpt-5.5"),
+    tools=[
+        YFinanceTools(
+            stock_price=True, 
+            analyst_recommendations=True, 
+            stock_fundamentals=True
+        )
+    ],
+    description="You are an investment analyst that researches stock prices, analyst recommendations, and stock fundamentals.",
+    instructions="Format your response using markdown and use tables to display data where possible.",
+)
+
+agent_os = AgentOS(
+    agents=[agent],
+    interfaces=[AGUI(agent=agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="agent_with_tools:app", reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export OPENAI_API_KEY=your_openai_api_key
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai yfinance
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python cookbook/05_agent_os/interfaces/agui/agent_with_tools.py
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Financial Data Tools**: Real-time stock prices, analyst recommendations, fundamentals
+- **Investment Analysis**: Comprehensive company analysis and recommendations  
+- **Data Visualization**: Tables and formatted financial information
+- **Web Interface**: Professional browser-based interaction
+- **GPT-4o Powered**: Advanced reasoning for financial insights
+

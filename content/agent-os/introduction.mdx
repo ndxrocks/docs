@@ -1,0 +1,123 @@
+---
+title: "What is AgentOS?"
+sidebarTitle: "Introduction"
+description: "The runtime for your agent platform."
+---
+
+**AgentOS is a FastAPI app that runs your agent platform.** It's a live service that:
+
+1. Runs agents on demand, via API requests or interfaces like Slack,  Telegram, and others.
+2. Maintains long-running sessions that last from minutes to days to weeks.
+3. Is durable across restarts, replicas, and infrastructure failures.
+4. Is secure against unauthenticated access.
+5. Logs every run and action taken.
+
+Build your agents using the [Kern SDK](/sdk/introduction), run them using the AgentOS runtime.
+
+Here's a minimal example of the AgentOS serving an Agent with memory, state and MCP:
+
+```python agno_assist.py lines
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.anthropic import Claude
+from kern.os import AgentOS
+from kern.tools.mcp import MCPTools
+
+agno_assist = Agent(
+    name="Kern Assist",
+    model=Claude(id="claude-sonnet-4-5"),
+    db=SqliteDb(db_file="kern.db"),
+    tools=[MCPTools(url="https://kern.ndx.rocks/mcp")],
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
+)
+
+agent_os = AgentOS(agents=[agno_assist])
+app = agent_os.get_app()
+```
+
+## Key Features
+
+- **Production API**: 50+ ready to use endpoints with SSE-compatible streaming.
+- **Data Ownership**: Sessions, memory, knowledge, and traces stored in your database.
+- **Request Isolation**: No state bleed between users, agents, or sessions.
+- **Security**: JWT-based RBAC with hierarchical scopes.
+- **Observability**: Traces stored in your database with no third-party egress or vendor lock-in.
+- **Governance**: Guardrails, human-in-the-loop, and approval flows for full control.
+- **Multi-framework**: Serve agents built with the Claude Agent SDK, LangGraph and DSPy alongside native Kern agents. See [Multi-Framework Support](/agent-os/multi-framework/overview).
+
+## Architecture
+
+AgentOS has two parts:
+
+1. **Runtime**: A FastAPI service that runs agents, teams, and workflows.
+2. **Control plane**: A UI for managing, monitoring, and debugging your system.
+
+The runtime exposes the APIs that power both the control plane and your AI products. The runtime can serve agents built with the [Kern SDK](/sdk/introduction), the [Claude Agent SDK, LangGraph, or DSPy](/agent-os/multi-framework/overview).
+
+<img
+  className="block dark:hidden"
+  src="/images/agent-os/agentos-architecture-light.png"
+  alt="AgentOS Architecture"
+/>
+
+<img
+  className="hidden dark:block"
+  src="/images/agent-os/agentos-architecture-dark.png"
+  alt="AgentOS Architecture"
+/>
+
+The AgentOS runs as a container in your cloud. The UI connects directly from the browser. No proxies. No data relays. Your data stays completely private.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    controls
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-agent-chat.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Private by Design
+
+Most AI tooling stores your data on their servers. You pay retention costs, deal with egress fees, and depend on their security. AgentOS runs entirely in your infrastructure:
+- **Your database**: Sessions, memory, knowledge, traces. All stored where you control it.
+- **Zero transmission**: No conversations, logs, or metrics sent to Kern.
+- **From browser to runtime**: The control plane connects from your browser to the runtime. Kern stores no data except for your runtime endpoint. All data resides in your database.
+
+See [AgentOS Security](/agent-os/security/overview) for more details.
+
+<Frame>
+  <img
+    src="/images/agentos-secure-infra-illustration.png"
+    alt="AgentOS Security and Privacy Architecture"
+    style={{ borderRadius: "0.5rem" }}
+  />
+</Frame>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Run Your First AgentOS" icon="plus" href="/agent-os/run-your-os">
+    Initialize and serve a basic agent.
+  </Card>
+  <Card
+    title="Connect AgentOS to UI"
+    icon="link"
+    href="/agent-os/connect-your-os"
+  >
+    Manage AgentOS using a Web UI.
+  </Card>
+  <Card title="Control Plane" icon="desktop" href="/agent-os/control-plane">
+    Inspect sessions and debug traces.
+  </Card>
+  <Card title="Learn More" icon="book" href="/agent-os/overview">
+    Learn more about AgentOS
+  </Card>
+</CardGroup>

@@ -1,0 +1,41 @@
+---
+title: "Shell"
+description: "Use shell tools with Kern agents."
+---
+
+Enable Kern agents to interact directly with the operating system's terminal, allowing them to perform file system operations, run scripts, and manage system processes
+
+```python
+
+
+from kern.agent import Agent
+from kern.tools.shell import ShellTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+
+agent = Agent(tools=[ShellTools()])
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response("Show me the contents of the current directory", markdown=True)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python shell_tools.py
+```
+
+For details, see [Shell tools cookbook](https://github.com/kern-ai/kern/blob/main/cookbook/91_tools/shell_tools.py).

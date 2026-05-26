@@ -1,0 +1,68 @@
+---
+title: "Team Tool Metrics"
+description: "Track leader metrics, member metrics, and tool execution timing in teams."
+---
+```python
+"""Leader metrics, member metrics, and tool execution timing in teams."""
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.team import Team
+from kern.tools.yfinance import YFinanceTools
+from rich.pretty import pprint
+
+stock_searcher = Agent(
+    name="Stock Searcher",
+    model=OpenAIChat(id="gpt-4o-mini"),
+    role="Searches for stock information.",
+    tools=[YFinanceTools()],
+)
+
+team = Team(
+    name="Stock Research Team",
+    model=OpenAIChat(id="gpt-4o-mini"),
+    members=[stock_searcher],
+    markdown=True,
+    show_members_responses=True,
+    store_member_responses=True,
+)
+
+if __name__ == "__main__":
+    run_output = team.run("What is the stock price of NVDA?")
+
+    # Team leader run metrics
+    print("=" * 50)
+    print("TEAM LEADER RUN METRICS")
+    print("=" * 50)
+    pprint(run_output.metrics)
+
+    # Member-level metrics and tool calls
+    print("=" * 50)
+    print("MEMBER METRICS AND TOOL CALLS")
+    print("=" * 50)
+    if run_output.member_responses:
+        for member_response in run_output.member_responses:
+            print(f"\nMember: {member_response.agent_name}")
+            print("-" * 40)
+            pprint(member_response.metrics)
+
+            if member_response.tools:
+                print(f"\nTool calls ({len(member_response.tools)}):")
+                for tool_call in member_response.tools:
+                    print(f"  Tool: {tool_call.tool_name}")
+                    if tool_call.metrics:
+                        pprint(tool_call.metrics)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/03_teams/22_metrics
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python 04_team_tool_metrics.py
+```

@@ -1,0 +1,102 @@
+---
+title: Troubleshooting & Debugging 🐛
+sidebarTitle: Debugging Agents
+description: "When things go sideways (especially with small models!), here is how to open the hood and inspect the wiring."
+mode: wide
+---
+
+Let's be honest: AI models can be unpredictable. When you're running lightweight 1-7B parameter models locally, they are more prone to making formatting mistakes, calling tools with weird parameters, or getting stuck in loops.
+
+Kern provides built-in debug tools to show you exactly what is sent to the model, what comes back, and how tools are being executed step-by-step.
+
+---
+
+## 🛠️ Enabling Debug Mode
+
+You can turn on debug logs in three different ways:
+
+1. **Per-Agent**: Set `debug_mode=True` when initializing your agent.
+2. **Per-Run**: Pass `debug_mode=True` to the `run()` or `print_response()` methods.
+3. **Globally**: Set the environment variable `KERN_DEBUG=True`.
+
+Here's how to turn it on for your agent using a local Llama model:
+
+```python debug_example.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.hackernews import HackerNewsTools
+
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=[HackerNewsTools()],
+    instructions="Summarize technology news in 3 bullet points.",
+    markdown=True,
+    debug_mode=True,      # Turn on logging! 🔍
+    # debug_level=2,      # Uncomment for ultra-detailed trace logging
+)
+
+# Run agent and inspect the detailed terminal outputs!
+agent.print_response("Any new articles on Quantum Computing?")
+```
+
+<Tip>
+  Need even more details? Set `debug_level=2` to see raw schemas, prompt templates, and direct network headers.
+</Tip>
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/debug_mode.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+---
+
+## ⚠️ Common Debugging Scenarios for Small Models
+
+When debugging local 1-7B models, keep an eye out for these common issues:
+
+### 1. Tool Call Failures ❌
+Small models can sometimes try to invoke a tool but get the parameter names wrong. Check the debug logs to see the exact JSON payload the model sent to the tool. If it keeps failing, try writing simpler tool descriptions or using simpler parameter types.
+
+### 2. Infinite Loops 🔄
+If a model gets confused, it might call the same tool repeatedly with the same arguments. You can prevent runaway token consumption by setting `max_loops` on the agent:
+```python
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    max_loops=3  # Stop after 3 tool execution loops 🛡️
+)
+```
+
+### 3. JSON Output Formatting 📦
+If the model output doesn't conform to your Pydantic schemas, Kern automatically triggers its **JSON repair engine**. The debug log will show you the malformed output, the repaired version, and if it succeeded.
+
+---
+
+## 💬 Playground in the Terminal (CLI App)
+
+Want to quickly test multi-turn conversations and memory without building a frontend? Use the built-in CLI mode! It starts an interactive chat loop right in your shell:
+
+```python cli_chat.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+from kern.tools.hackernews import HackerNewsTools
+
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=[HackerNewsTools()],
+    db=SqliteDb(db_file="tmp/chat_history.db"),
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
+)
+
+# Launch the interactive terminal chat! 🚀
+agent.cli_app(stream=True)
+```

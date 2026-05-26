@@ -1,0 +1,108 @@
+---
+title: Semantic Libraries: Knowledge 📚
+sidebarTitle: Overview
+description: "Give local models access to custom files, web pages, and domain expertise so they never hallucinate."
+keywords: [knowledge, rag, agentic rag, agentic search, vector database, embeddings]
+mode: wide
+---
+
+Broad general knowledge is great, but your agents need to know about *your* business: company FAQs, product API docs, database schemas, or customer records. 
+
+For local 1-7B parameter models, trying to memorize everything or feeding entire files into the prompt window leads to confusion. 
+
+**Knowledge** gives your agents a semantic search library! 📚
+
+Load your files, URLs, or markdown documentation into a local vector database. When a user asks a question, the agent searches the database, finds the most relevant paragraphs, and references them to answer accurately.
+
+---
+
+## 🚀 Ingesting Knowledge in 3 Lines
+
+Here is how to boot up a local knowledge base with ChromaDB, insert a web document, and chat with an Ollama-powered agent about it:
+
+```python knowledge_agent.py
+from kern.agent import Agent
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.chroma import ChromaDb
+from kern.models.openai import OpenAIChat
+
+# 1. Establish our local vector store 🗄️
+knowledge = Knowledge(
+    vector_db=ChromaDb(collection="my_docs", path="tmp/chromadb"),
+)
+
+# 2. Feed it some content (supports PDFs, text, markdown, web URLs, etc.) 📂
+knowledge.insert(url="https://kern.ndx.rocks/getting-started")
+
+# 3. Create an agent equipped to search this knowledge base
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    knowledge=knowledge,
+    search_knowledge=True,  # Let the agent search when needed! 🔍
+)
+
+agent.print_response("How do I install the kern-ai pip package?")
+```
+
+---
+
+## ⚙️ The RAG Pipeline: How It Works
+
+Building a knowledge base involves three automated phases:
+
+1. **Ingestion (Reading)**: Kern reads documents from local directories, PDFs, raw text, or web links.
+2. **Chunking & Embedding (Indexing)**: Documents are cut into smaller paragraphs (chunks) and converted into vector coordinates (embeddings) representing their semantic meaning.
+3. **Retrieval (Searching)**: When the user asks a question, Kern finds the chunks that are mathematically closest in meaning, extracts them, and hands them to the model as context.
+
+---
+
+## 🧠 Traditional RAG vs. Agentic RAG
+
+* **Traditional RAG**: Always searches the database and forces the paragraphs into the prompt, whether the model needs them or not.
+* **Agentic RAG (Default in Kern) 🤖**: The agent decides if it needs to search. If the user says "Hello!", it just responds. If the user says "How does the widget compile?", the agent triggers a search tool, reads the documentation, and answers. This saves tokens and keeps local models focused!
+
+---
+
+## ✍️ Agents That Learn Over Time
+
+Knowledge isn't just read-only. You can write custom tools that allow your agent to write its own findings back into the knowledge base:
+
+```python
+def save_new_insight(title: str, content: str) -> str:
+    """Save an important learning or user fact into the knowledge base.
+
+    Args:
+        title (str): The name or category of this insight.
+        content (str): The details of the learning.
+    """
+    knowledge.insert(name=title, text_content=content)
+    return f"Insight saved under: '{title}'"
+
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    knowledge=knowledge,
+    search_knowledge=True,
+    tools=[save_new_insight],  # Hand the write tool to the agent! ✍️
+)
+```
+
+Now, your agent can dynamically learn, adapt, and build its own custom database over time!
+
+---
+
+## 📚 Explore the Docs
+
+<CardGroup cols={3}>
+  <Card title="Quick Start 🚀" icon="rocket" href="/knowledge/quickstart">
+    Set up a basic knowledge base in under 5 minutes.
+  </Card>
+  <Card title="Agentic search 🤖" icon="robot" href="/knowledge/agents/overview">
+    Configure chunk sizes, reranking, and search rules.
+  </Card>
+  <Card title="Vector Databases 🗄️" icon="database" href="/knowledge/concepts/vector-db">
+    Learn how to store and search embeddings.
+  </Card>
+  <Card title="Supported Vector DBs" icon="layer-group" href="/knowledge/vector-stores/pgvector/overview">
+    Browse 20+ supported databases (PgVector, LanceDB, Pinecone, Chroma).
+  </Card>
+</CardGroup>

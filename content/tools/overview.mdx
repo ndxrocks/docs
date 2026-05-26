@@ -1,0 +1,165 @@
+---
+title: Hands and Feet: Tools 🛠️
+sidebarTitle: Overview
+description: "Tools are Python functions that your agents and teams call to interact with external systems."
+mode: wide
+---
+
+Without tools, an LLM is like a brain floating in a jar: it can think and talk, but it can't interact with the world. 
+
+**Tools are the hands and feet of your agents!** 🛠️ 
+
+Equip your agents with tools, and they can browse the web, execute database queries, send emails, query stock markets, or read files.
+
+Kern comes with **120+ pre-built toolkits**, and you can write custom Python functions to create your own tools in seconds.
+
+---
+
+## 🛠️ The Hello World Weather Tool
+
+Here's how to turn a standard Python function into an agent tool:
+
+```python weather_agent.py
+import random
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+
+# 1. Write your custom Python function 🐍
+def get_weather(city: str) -> str:
+    """Get the current weather for a city.
+
+    Args:
+        city (str): The city to fetch the weather for.
+    """
+    conditions = ["sunny ☀️", "rainy 🌧️", "cloudy ☁️", "windy 💨"]
+    return f"The weather in {city} is {random.choice(conditions)}."
+
+# 2. Hand it to the agent!
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=[get_weather],  # Just pass the function directly!
+    markdown=True,
+)
+
+# The agent will analyze the query, detect it needs the weather, and call the tool 🚀
+agent.print_response("What is the weather in Tokyo?", stream=True)
+```
+
+<Tip>
+  Kern inspects your Python function's name, type hints, and **docstring** to automatically build the JSON schema that tells the LLM how to call it. Always write descriptive docstrings! 📝
+</Tip>
+
+---
+
+## ⚙️ How Tools Work Under the Hood
+
+The execution loop follows these steps:
+1. **Definition**: Kern converts your Python functions into standard tool schemas.
+2. **Delivery**: The agent sends these schemas along with the user's prompt to the model.
+3. **Execution**: The model returns a tool request payload. The agent runs the Python function with the parameters provided by the model.
+4. **Resynthesis**: The tool outputs are sent back to the model as context. The model reads the results and generates a final response.
+
+---
+
+## ⚡ Concurrency: Running Tools in Parallel
+
+If a model decides to execute multiple tool calls (e.g. "Get weather in London AND Paris"), executing them one-by-one is slow.
+
+Kern supports **parallel tool execution**! When running asynchronously with `arun()` or `aprint_response()`, Kern fires off all requested tool calls concurrently on separate threads. 🚀
+
+<Check>
+  Parallel tool calling requires a model that supports concurrent function calls (like GPT-4o or Ollama running newer models like Llama 3).
+</Check>
+
+---
+
+## ⚙️ Smart Parameter Injection
+
+Kern can automatically inject agent state, media inputs, or execution metadata into your tool functions without the model knowing about it.
+
+### 🧠 Accessing Session State via `RunContext`
+If your tool needs to read or write persistent session data, add `run_context` to its parameters:
+
+```python shopping_list_tool.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.run import RunContext
+
+def add_shopping_item(run_context: RunContext, item: str) -> str:
+    """Add an item to the user's shopping list.
+
+    Args:
+        item (str): The item to add.
+    """
+    if not run_context.session_state:
+        run_context.session_state = {"list": []}
+    
+    run_context.session_state["list"].append(item)
+    return f"Added. Current list: {run_context.session_state['list']}"
+
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    tools=[add_shopping_item],
+    session_state={"list": []},
+)
+
+agent.print_response("Add milk to my list", stream=True)
+```
+
+### 🖼️ Accessing Media Inputs
+You can also accept special arguments like `images`, `videos`, `audio`, or `files` directly in your tool parameters to analyze multimodal inputs.
+
+---
+
+## 📦 Complex Tool Outputs with `ToolResult`
+
+Sometimes tools return more than just text. What if your tool generates an image, exports a file, or plays audio?
+
+Return a `ToolResult` object to send structured media content back to the agent:
+
+```python image_gen_tool.py
+from kern.tools.function import ToolResult
+from kern.media import Image
+
+def generate_avatar(prompt: str) -> ToolResult:
+    """Generate an avatar image.
+
+    Args:
+        prompt (str): Image generation prompt.
+    """
+    # Simulate generating an avatar
+    avatar_image = Image(
+        id="avatar_1",
+        url="https://example.com/avatar.png",
+        original_prompt=prompt
+    )
+    
+    return ToolResult(
+        content=f"Successfully generated avatar for prompt: '{prompt}'",
+        images=[avatar_image]
+    )
+```
+
+---
+
+## 🗺️ Next Steps
+
+Explore the tool ecosystem in Kern:
+
+<CardGroup cols={3}>
+  <Card href="/tools/agent" icon="robot" iconType="duotone">
+    Equip single agents with custom tools.
+  </Card>
+  <Card href="/tools/team" icon="users" iconType="duotone">
+    Configure shared tools for team members.
+  </Card>
+  <Card href="/tools/toolkits/overview" icon="box-open" iconType="duotone">
+    Browse 120+ pre-built toolkits (Web Search, Postgres, etc).
+  </Card>
+  <Card href="/tools/mcp/overview" icon="network-wired" iconType="duotone">
+    Connect to Model Context Protocol (MCP) servers.
+  </Card>
+  <Card href="/tools/creating-tools/overview" icon="code" iconType="duotone">
+    Write advanced custom python tools.
+  </Card>
+</CardGroup>

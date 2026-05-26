@@ -1,0 +1,128 @@
+---
+title: Team with Followup Suggestions
+sidebarTitle: Followup Suggestions
+description: "Generate actionable followup prompts after every team response."
+---
+
+Set `followups=True` on a Team to automatically generate followup prompt suggestions after each response. Works the same way as [agent followups](/agents/usage/agent-with-followup-suggestions), with support for all team modes.
+
+<Steps>
+
+  <Step title="Create a Python file">
+    ```python team_followup_suggestions.py
+    from kern.agent import Agent
+    from kern.models.openai import OpenAIResponses
+    from kern.team.team import Team
+    from kern.team.mode import TeamMode
+
+    researcher = Agent(
+        name="Researcher",
+        role="Research topics thoroughly",
+        model=OpenAIResponses(id="gpt-4o"),
+    )
+
+    team = Team(
+        name="Research Team",
+        model=OpenAIResponses(id="gpt-4o"),
+        mode=TeamMode.coordinate,
+        members=[researcher],
+        followups=True,
+        num_followups=3,
+    )
+
+    response = team.run("What are the latest advances in fusion energy?")
+
+    print(response.content)
+    print("\nFollowup suggestions:")
+    for i, suggestion in enumerate(response.followups, 1):
+        print(f"  {i}. {suggestion}")
+    ```
+  </Step>
+
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai openai
+    ```
+  </Step>
+
+  <Step title="Export your OpenAI API key">
+    <CodeGroup>
+    ```bash Mac/Linux
+    export OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+    ```bash Windows
+    $Env:OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Run Team">
+    ```bash
+    python team_followup_suggestions.py
+    ```
+  </Step>
+
+</Steps>
+
+## Options
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `followups` | `bool` | `False` | Enable followup suggestion generation |
+| `num_followups` | `int` | `3` | Number of suggestions to generate (minimum 1) |
+| `followup_model` | `Model` | Team's model | Separate model for generating followups. Use a smaller model to reduce cost. |
+
+## Streaming
+
+Followup suggestions are available via events when streaming.
+
+```python team_followup_streaming.py
+import asyncio
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIResponses
+from kern.team.team import Team
+from kern.team.mode import TeamMode
+from kern.team import TeamRunEvent
+
+researcher = Agent(
+    name="Researcher",
+    role="Research topics thoroughly",
+    model=OpenAIResponses(id="gpt-4o"),
+)
+
+team = Team(
+    name="Research Team",
+    model=OpenAIResponses(id="gpt-4o"),
+    mode=TeamMode.coordinate,
+    members=[researcher],
+    followups=True,
+    num_followups=3,
+)
+
+
+async def main():
+    async for event in team.arun(
+        "What are the latest advances in fusion energy?",
+        stream=True,
+        stream_events=True,
+    ):
+        if event.event == TeamRunEvent.run_content and event.content:
+            print(event.content, end="", flush=True)
+
+        if event.event == TeamRunEvent.followups_completed:
+            print("\n\nFollowup suggestions:")
+            for i, suggestion in enumerate(event.followups, 1):
+                print(f"  {i}. {suggestion}")
+
+
+asyncio.run(main())
+```
+
+## Developer Resources
+
+- [Agent followup suggestions](/agents/usage/agent-with-followup-suggestions)
+- [Team reference](/reference/teams/team)
+- [TeamRunOutput reference](/reference/teams/team-response)

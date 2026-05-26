@@ -1,0 +1,228 @@
+---
+title: "AgentOS Control Plane"
+description: "A web interface for testing, monitoring, and managing your multi-agent system."
+---
+
+The control plane is where you chat with agents, view traces, manage knowledge, track sessions, and monitor performance.
+
+<Frame>
+  <img
+    src="/images/agentos-full-screenshot.png"
+    alt="AgentOS Control Plane Dashboard"
+    style={{ borderRadius: "0.5rem" }}
+  />
+</Frame>
+
+<Tip>
+
+It connects directly from your browser to your AgentOS runtime. No data is sent to Kern.
+
+</Tip>
+
+## Chat Interface
+
+Chat with agents, collaborate with teams, and run workflows from one screen.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-chat.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+### Agents
+
+Select an agent from the right panel and start a conversation. Each agent maintains its own history, tools, and instructions. Switching agents won't mix contexts.
+
+### Teams
+
+Switch the toggle to Teams. Use the chat stream to watch how the team divides and solves the task.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-teams-chat.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+### Workflows
+
+Switch to Workflows. Provide input (plain text or structured, depending on the workflow) and watch execution live as steps stream, produce output, and finish.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-workflows-chat.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Approvals
+
+Pending tool executions can require human confirmation. Approvals pause runs until an admin resolves the request.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/approvalsdemo.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Tracing
+
+Traces capture the complete execution flow of agents and teams. Each trace contains spans representing individual operations (LLM calls, tool executions, etc.) with token usage, latency, and error information.
+
+### Tree View
+
+Displays spans in a hierarchical structure showing parent-child relationships between operations. Useful for understanding how teams delegate to agents and how agents invoke tools.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/trace-tree.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+### Waterfall View
+
+Visualizes spans on a time axis showing when each operation started, how long it took, and which operations ran in parallel. Helps identify bottlenecks and optimize performance.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/traces-timeline-view.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Session Tracking
+
+Sessions group related runs under a single `session_id`. Each session captures messages, tool calls, metrics, and summaries for a single conversation. Sessions are stored in your database and can be queried and managed from the control plane.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-session-management.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Knowledge
+
+Knowledge bases provide agents with domain-specific information through RAG (Retrieval-Augmented Generation). Manage multiple knowledge bases, add content from URLs, files, or text, and monitor embedding status. Each knowledge base stores documents, chunks them, generates embeddings, and makes them searchable for agents.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-knowledge.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Memories
+
+Memories store information that agents learn about users across conversations. Each memory is tied to a user ID and contains content, topics, timestamps, and the input that generated it. You can view, create, edit, or delete memories from the control plane.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/memory-table-usage.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+
+## Schedules
+
+Automate agents, teams, and workflows via AgentOS cron schedules. Configure custom intervals, retry logic, and timezones. Use the Control Panel to monitor run history, enable/disable job states, or trigger manual executions.
+
+For setup and API details, see [Scheduler](/agent-os/scheduler/overview) documentation.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/schedulesdemo.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## Managing Your AgentOS
+
+Connect and inspect your AgentOS runtimes from a single interface. Switch between local development and production instances and monitor connection health.
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-select-os.mp4" type="video/mp4" />
+  </video>
+</Frame>
+
+## User Management
+
+Invite team members by entering their email addresses. Separate multiple emails with commas or press Enter/Tab between addresses.
+
+| Role | Access |
+|------|--------|
+| **Owner** | Full administrative access including billing and member management |
+| **Member** | Access to AgentOS features and collaboration |
+
+<Frame>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    style={{ borderRadius: "0.5rem", width: "100%", height: "auto" }}
+  >
+    <source src="/videos/agentos-invite-member.mp4" type="video/mp4" />
+  </video>
+</Frame>

@@ -1,0 +1,145 @@
+---
+title: AgentOS Gateway
+sidebarTitle: Gateway
+description: Create a unified API gateway for multiple AgentOS instances
+mode: wide
+---
+
+<Steps>
+
+  <Step title="Create the remote server file">
+    First, create a server that will host agents remotely:
+    ```python remote_server.py
+    from kern.agent import Agent
+    from kern.db.sqlite import SqliteDb
+    from kern.models.openai import OpenAIResponses
+    from kern.os import AgentOS
+    from kern.team import Team
+    from kern.tools.hackernews import HackerNewsTools
+
+    db = SqliteDb(id="remote-db", db_file="tmp/remote.db")
+
+    assistant = Agent(
+        name="Assistant",
+        id="assistant-agent",
+        model=OpenAIResponses(id="gpt-5.2"),
+        instructions="You are a helpful assistant.",
+        db=db,
+    )
+
+    researcher = Agent(
+        name="Researcher",
+        id="researcher-agent",
+        model=OpenAIResponses(id="gpt-5.2"),
+        tools=[HackerNewsTools()],
+        db=db,
+    )
+
+    research_team = Team(
+        name="Research Team",
+        id="research-team",
+        model=OpenAIResponses(id="gpt-5.2"),
+        members=[assistant, researcher],
+        db=db,
+    )
+
+    agent_os = AgentOS(
+        id="remote-server",
+        agents=[assistant, researcher],
+        teams=[research_team],
+    )
+
+    app = agent_os.get_app()
+
+    if __name__ == "__main__":
+        agent_os.serve(app="remote_server:app", reload=True, port=7778)
+    ```
+  </Step>
+
+  <Step title="Create the gateway file">
+    ```python gateway.py
+    from kern.agent import RemoteAgent
+    from kern.os import AgentOS
+    from kern.team import RemoteTeam
+
+    # Create the gateway that proxies to remote agents
+    gateway = AgentOS(
+        id="api-gateway",
+        description="Gateway for remote agents and teams",
+        agents=[
+            RemoteAgent(base_url="http://localhost:7778", agent_id="assistant-agent"),
+            RemoteAgent(base_url="http://localhost:7778", agent_id="researcher-agent"),
+        ],
+        teams=[
+            RemoteTeam(base_url="http://localhost:7778", team_id="research-team"),
+        ],
+    )
+
+    app = gateway.get_app()
+
+    if __name__ == "__main__":
+        gateway.serve(app="gateway:app", reload=True, port=7777)
+    ```
+  </Step>
+
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai openai
+    ```
+  </Step>
+
+  <Step title="Export your OpenAI API key">
+    <CodeGroup>
+    ```bash Mac/Linux
+    export OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+
+    ```bash Windows
+    $Env:OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Start the Remote Server">
+    In terminal 1, start the remote server:
+    ```bash
+    python remote_server.py
+    ```
+  </Step>
+
+  <Step title="Start the Gateway">
+    In terminal 2, start the gateway:
+    ```bash
+    python gateway.py
+    ```
+  </Step>
+
+  <Step title="Use the Gateway">
+    Now you can access all agents through the gateway at `http://localhost:7777`:
+    ```python
+    from kern.client import AgentOSClient
+    import asyncio
+
+    async def main():
+        client = AgentOSClient(base_url="http://localhost:7777")
+        config = await client.aget_config()
+        print(f"Available agents: {[a.id for a in config.agents]}")
+        
+        # Run a remote agent through the gateway
+        response = await client.run_agent(
+            agent_id="assistant-agent",
+            message="Hello from the gateway!",
+        )
+        print(response.content)
+
+    asyncio.run(main())
+    ```
+  </Step>
+
+</Steps>
+
+<Note>
+If authorization is enabled on remote servers and all endpoints are protected, not all of the functions work correctly on the gateway. Specifically `/config`, `/workflows`, `/workflows/{workflow_id}`, `/agents`, `/teams`, `/agent/{agent_id}`, `/team/{team_id}` need to be unprotected for the gateway to work correctly.
+</Note>

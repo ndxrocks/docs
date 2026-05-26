@@ -1,0 +1,30 @@
+---
+title: File Input
+description: Process files as input with Kern agents.
+keywords: [file input, pdf input, document processing, file upload, multimodal files]
+mode: wide
+---
+
+Kern supports files as input to agents and tools. 
+
+Let's create an agent that can understand files and make tool calls as needed.
+
+```python
+from kern.agent import Agent
+from kern.media import File
+from kern.models.anthropic import Claude
+from kern.db.in_memory import InMemoryDb
+
+agent = Agent(
+    model=Claude(id="claude-sonnet-4-0"),
+    db=InMemoryDb(),
+    markdown=True,
+)
+
+agent.print_response(
+    "Summarize the contents of the attached file.",
+    files=[
+        File(url="https://kern-public.s3.amazonaws.com/recipes/ThaiRecipes.pdf"),
+    ],
+)
+```

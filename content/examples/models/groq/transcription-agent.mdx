@@ -1,0 +1,45 @@
+---
+title: "Groq Transcription Agent"
+description: "Groq model example."
+---
+```python
+"""Run `uv pip install groq` to install dependencies."""
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.models.groq import GroqTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+url = "https://kern-public.s3.amazonaws.com/demo_data/sample_conversation.wav"
+
+agent = Agent(
+    name="Groq Transcription Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    tools=[GroqTools(exclude_tools=["generate_speech"])],
+)
+
+agent.print_response(f"Please transcribe the audio file located at '{url}' to English")
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    pass
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/90_models/groq
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python transcription_agent.py
+```

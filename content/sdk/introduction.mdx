@@ -1,0 +1,150 @@
+---
+title: Introduction to Kern 🚀
+description: "Build robust, local-first AI agents, teams, and workflows in pure Python."
+mode: wide
+---
+
+**Kern** is a lightweight Python framework designed specifically for building AI agent systems that run efficiently on **small language models (1-7B parameters)**. 
+
+While most agent frameworks are built with massive cloud APIs in mind, Kern is optimized for local environments—like running Ollama or llama.cpp directly on your laptop. It handles structured outputs, JSON repair, tool execution, memory storage, and real-time workflow visualizations under the hood, making smaller models behave like reliable business partners.
+
+Here are the three core building blocks (primitives) of Kern:
+
+<CodeGroup>
+
+```python Agent
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.db.sqlite import SqliteDb
+
+# 1. Boot up a single autonomous agent 🤖
+coding_assistant = Agent(
+    name="Coding Partner",
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    db=SqliteDb(db_file="tmp/dev_db.db"),
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
+)
+
+coding_assistant.print_response("Write a fast Fibonacci function in Python.")
+```
+
+```python Team
+from kern.agent import Agent
+from kern.team import Team
+from kern.models.openai import OpenAIChat
+from kern.tools.yfinance import YFinanceTools
+
+# Connect to local Ollama model
+local_model = OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1")
+
+# 2. Coordinate multiple specialized agents in a team! 🤝
+bull = Agent(
+    name="Bullish Advisor",
+    model=local_model,
+    role="Focus on positive catalysts and growth indicators",
+    tools=[YFinanceTools()],
+)
+bear = Agent(
+    name="Bearish Advisor",
+    model=local_model,
+    role="Focus on risks, competition, and macroeconomic hurdles",
+    tools=[YFinanceTools()],
+)
+
+investment_team = Team(
+    name="Investment Committee",
+    members=[bull, bear],
+    instructions="Analyze the stock from both positive and negative angles, then synthesize a recommendation.",
+)
+
+investment_team.print_response("Should I invest in NVIDIA stock?")
+```
+
+```python Workflow
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.workflow import Workflow
+from kern.tools.hackernews import HackerNewsTools
+
+# Connect to local Ollama model
+local_model = OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1")
+
+# 3. Build a predictable, step-based pipeline ⛓️
+researcher = Agent(
+    model=local_model,
+    tools=[HackerNewsTools()],
+    instructions="Find the top three trending tech topics.",
+)
+
+writer = Agent(
+    model=local_model,
+    instructions="Write a summary report based on the topics provided.",
+)
+
+content_pipeline = Workflow(
+    name="Weekly Tech Digest",
+    steps=[researcher, writer]
+)
+
+content_pipeline.print_response("Generate this week's digest.", stream=True)
+```
+
+</CodeGroup>
+
+---
+
+## 🧱 The Three Primitives
+
+| Primitive | What it is | When to use it |
+| :--- | :--- | :--- |
+| [**Agent** 🤖](/agents/overview) | A single reasoning loop with instructions and tools. | For targeted, single-domain tasks or open-ended interactions. |
+| [**Team** 🤝](/teams/overview) | Multiple specialized agents coordinating under a leader. | To divide a complex task among distinct domain experts. |
+| [**Workflow** ⛓️](/workflows/overview) | A deterministic, step-by-step execution pipeline. | When you need predictable, repeatable execution with clear steps. |
+
+---
+
+## ⚙️ Core Capabilities
+
+### 🧠 Model & Context
+- **[Models](/models/overview)**: Easy adapters for Ollama, llama.cpp, vLLM, and cloud providers.
+- **[Structured Outputs](/input-output/overview)**: Template-based generation and automatic JSON repair for models under 7B.
+- **[Storage & Db](/database/overview)**: Persist chat history, logs, and variables to SQLite or PostgreSQL.
+- **[Memory](/memory/overview)**: Keep track of user facts across sessions.
+- **[Knowledge](/knowledge/overview)**: Ground your responses in external files and web links using RAG.
+
+### 🛠️ Execution & Safety
+- **[Tools](/tools/overview)**: 120+ pre-built integrations to fetch weather, search the web, or read file workspaces.
+- **[Guardrails](/guardrails/overview)**: Validate model outputs before returning them to users.
+- **[Human-in-the-Loop](/hitl/overview)**: Pause agent executions to wait for approval or manual input.
+- **[Background Runs](/background-execution/overview)**: Spin up long-running tasks asynchronously.
+
+---
+
+## 🚀 Moving to Production: AgentOS
+
+Once you've tested your agent script, you'll want to serve it. Kern includes **AgentOS**, a runtime framework that converts your Python agents into fully-featured web API servers (built on FastAPI) with authentication, tracing, and user interface panels out of the box.
+
+---
+
+## 🗺️ Where to next?
+
+<CardGroup cols={2}>
+  <Card title="Install & Setup 🧪" icon="rocket" href="/sdk/setup">
+    Install the package, set up your model, and run your first agent.
+  </Card>
+  <Card title="Visualize Workflows 📊" icon="diagram-project" href="/visualization">
+    Generate real-time Mermaid diagrams of your agent runs.
+  </Card>
+</CardGroup>
+
+---
+
+<Note>
+  **Open Source Heritage & Credit** 🤝
+  Kern is built as a fork of the excellent [Agno](https://github.com/agno-agi/agno) framework. We are deeply grateful to the Agno team for their pioneering work on stateful agent orchestration. 
+
+  While Agno is built for general cloud scale, Kern focuses specifically on local-first optimization, template-based structured output, automatic JSON repair, and real-time visualization for smaller models (1-7B parameters) running on local developer setups.
+</Note>
+

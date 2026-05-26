@@ -1,0 +1,59 @@
+---
+title: Welcome to Kern
+description: 'Build robust, lightweight AI agents optimized for small language models (1-7B parameters).'
+mode: wide
+---
+
+Kern is a lightweight Python framework designed specifically for building AI agents that run efficiently on **small language models (1-7B parameters)**. 
+
+While general agent frameworks assume massive cloud LLMs (like GPT-4), Kern is built from the ground up for resource-constrained environments (like running Ollama or llama.cpp on your laptop). It provides structured outputs, automatic JSON repair, tool use, and rich workflow visualization—all tuned to work reliably with smaller models.
+
+<Frame caption="Your local agent platform and reliability dashboard">
+  <img
+    src="/images/demo-os.png"
+    alt="Kern Control Plane"
+    style={{ borderRadius: "0.5rem" }}
+  />
+</Frame>
+
+## Why Kern?
+
+### 1. Optimized for Small Models (1-7B)
+Every design choice in Kern prioritizes running local, small models (such as Llama 3.2 3B, Qwen 2.5 3B, and Phi-4 Mini). Prompts, defaults, and parameters are tuned to maximize the reasoning capabilities of models running locally.
+
+### 2. Template-Based Structured Output
+Small models struggle with abstract JSON Schemas and get confused by deep nesting. Kern uses intuitive **fill-in-the-blank templates** instead. This mirrors how text-completion models naturally think, dramatically improving structured output accuracy.
+
+### 3. Automatic JSON Repair
+When small models omit closing braces, add trailing commas, or prefix JSON with conversational commentary, Kern's built-in **repair engine** intercepts the output, fixes the structure, and returns valid JSON.
+
+### 4. Rich Visualization & Reliability Dashboard
+Kern features native **Mermaid workflow visualization** and a dynamic trace viewer. Build complex multi-agent teams and visualize the execution pipeline, tool calls, and data flow in real time without relying on cloud observability services.
+
+---
+
+## Core Capabilities
+
+<CardGroup cols={3}>
+  <Card title="Local Model First" icon="laptop" href="/docs/models">
+    Connect to Ollama, llama.cpp, vLLM, and LM Studio in seconds.
+  </Card>
+  <Card title="Structured Outputs" icon="brackets-curly" href="/docs/structured-output">
+    Template-based generation and automatic JSON repair.
+  </Card>
+  <Card title="Workflow Visualization" icon="diagram-project" href="/docs/visualization">
+    Generate Mermaid flowcharts from your agent execution chains.
+  </Card>
+</CardGroup>
+
+## Getting Started
+
+1. **Install Kern**:
+   ```bash
+   pip install kern-ai
+   ```
+
+2. **Run your first local agent**:
+   - [Build your first agent →](/docs/getting-started)
+   - [Configure model providers →](/docs/models)
+   - [Understand workflows and teams →](/docs/workflows)

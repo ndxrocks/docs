@@ -1,17 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, ChevronRight, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { docsConfig } from "@/lib/docs-config";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { docNavigation, DocItem } from "@/lib/docs-navigation";
 
 export function DocsMobileNav() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+
+  // SDK only — no tabs
+  const groups = docNavigation["SDK"] || [];
 
   return (
     <div className="lg:hidden">
@@ -22,57 +25,89 @@ export function DocsMobileNav() {
           onClick={() => setOpen(!open)}
           className="h-14 w-14 rounded-full shadow-lg bg-kern text-white hover:bg-kern-light border-0"
         >
-          <Menu className="h-6 w-6" />
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           <span className="sr-only">Navigation</span>
         </Button>
       </div>
 
       {open && (
-        <div className="fixed inset-0 top-[8rem] z-50 bg-background/95 backdrop-blur-sm">
-          <div className="flex items-center justify-end px-4 py-2">
-            <Button variant="ghost" size="icon" onClick={() => setOpen(false)}>
-              <X className="h-5 w-5" />
-            </Button>
-          </div>
-          <ScrollArea className="h-full px-4 pb-20">
-            <nav className="space-y-1">
-              {docsConfig.map((section) => (
-                <div key={section.href}>
-                  <Link
-                    href={section.href}
-                    onClick={() => setOpen(false)}
-                    className={cn(
-                      "flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                      pathname === section.href
-                        ? "bg-kern/10 text-kern-light"
-                        : "text-muted-foreground hover:bg-accent hover:text-foreground"
-                    )}
-                  >
-                    {section.title}
-                  </Link>
-                  {section.items && (
-                    <div className="ml-4 mt-1 space-y-1 border-l border-border/50 pl-3">
-                      {section.items.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setOpen(false)}
-                          className={cn(
-                            "flex items-center rounded-md px-3 py-1.5 text-sm transition-colors",
-                            pathname === item.href
-                              ? "text-kern-light"
-                              : "text-muted-foreground/70 hover:text-foreground"
-                          )}
-                        >
-                          {item.title}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
+        <div className="fixed inset-0 top-[4rem] z-50 bg-background/95 backdrop-blur-sm flex flex-col">
+          <ScrollArea className="flex-1 px-4 py-4 pb-20">
+            <nav className="space-y-6">
+              {groups.map((group, groupIdx) => (
+                <div key={groupIdx} className="space-y-1.5">
+                  <h4 className="px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">
+                    {group.group}
+                  </h4>
+                  <div className="space-y-0.5">
+                    {group.items.map((item, itemIdx) => (
+                      <MobileNavItem key={itemIdx} item={item} pathname={pathname} setOpen={setOpen} />
+                    ))}
+                  </div>
                 </div>
               ))}
             </nav>
           </ScrollArea>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MobileNavItem({
+  item,
+  pathname,
+  setOpen
+}: {
+  item: DocItem;
+  pathname: string;
+  setOpen: (open: boolean) => void;
+}) {
+  const hasItems = item.items && item.items.length > 0;
+  const isActive = pathname === item.href;
+
+  const [expanded, setExpanded] = useState(() => {
+    const isChildActive = (it: DocItem): boolean => {
+      if (it.href === pathname) return true;
+      if (it.items) {
+        return it.items.some(isChildActive);
+      }
+      return false;
+    };
+    return isChildActive(item);
+  });
+
+  return (
+    <div>
+      <div className="flex items-center justify-between rounded-md hover:bg-white/5 transition-colors">
+        <Link
+          href={item.href}
+          onClick={() => {
+            if (!hasItems) setOpen(false);
+          }}
+          className={cn(
+            "flex-1 flex items-center px-3 py-2 text-sm transition-colors",
+            isActive
+              ? "text-kern-light font-medium"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {item.title}
+        </Link>
+        {hasItems && (
+          <button
+            onClick={() => setExpanded(!expanded)}
+            className="p-2 text-muted-foreground/60 hover:text-foreground transition-colors mr-1 rounded"
+          >
+            {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+          </button>
+        )}
+      </div>
+      {hasItems && expanded && item.items && (
+        <div className="ml-3 mt-1 space-y-0.5 border-l border-white/5 pl-3">
+          {item.items.map((subItem, idx) => (
+            <MobileNavItem key={idx} item={subItem} pathname={pathname} setOpen={setOpen} />
+          ))}
         </div>
       )}
     </div>

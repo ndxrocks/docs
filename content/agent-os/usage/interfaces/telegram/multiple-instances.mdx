@@ -1,0 +1,95 @@
+---
+title: "Multiple Instances"
+description: "Multiple Telegram bots on a single AgentOS server"
+---
+
+## Code
+
+```python multiple_instances.py
+import os
+
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+from kern.os.app import AgentOS
+from kern.os.interfaces.telegram import Telegram
+from kern.tools.websearch import WebSearchTools
+
+agent_db = SqliteDb(db_file="tmp/persistent_memory.db")
+
+basic_agent = Agent(
+    name="Basic Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    db=agent_db,
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+    markdown=True,
+)
+
+web_research_agent = Agent(
+    name="Web Research Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    db=agent_db,
+    tools=[WebSearchTools()],
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+)
+
+# Telegram only supports one webhook per bot token, so each interface needs its own bot.
+# Create two bots via @BotFather and pass each token explicitly.
+agent_os = AgentOS(
+    agents=[basic_agent, web_research_agent],
+    interfaces=[
+        Telegram(agent=basic_agent, prefix="/basic", token=os.getenv("TELEGRAM_TOKEN_BASIC")),
+        Telegram(agent=web_research_agent, prefix="/web-research", token=os.getenv("TELEGRAM_TOKEN_RESEARCH")),
+    ],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="multiple_instances:app", reload=True)
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set Environment Variables">
+    ```bash
+    export TELEGRAM_TOKEN_BASIC=bot-token-for-basic-agent
+    export TELEGRAM_TOKEN_RESEARCH=bot-token-for-research-agent
+    export OPENAI_API_KEY=your-openai-api-key
+    export APP_ENV=development
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U "kern-ai[telegram]"
+    ```
+  </Step>
+
+  <Step title="Run Example">
+    ```bash
+    python multiple_instances.py
+    ```
+  </Step>
+
+  <Step title="Register Webhooks">
+    Register a webhook for each bot token:
+    ```bash
+    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN_BASIC}/setWebhook?url=${NGROK_URL}/basic/webhook"
+    curl "https://api.telegram.org/bot${TELEGRAM_TOKEN_RESEARCH}/setWebhook?url=${NGROK_URL}/web-research/webhook"
+    ```
+  </Step>
+</Steps>
+
+## Key Features
+
+- **Prefix-Based Routing**: Each agent gets its own webhook path (`/basic/webhook`, `/web-research/webhook`)
+- **Shared Server**: Both agents run on a single AgentOS instance
+- **Separate Bot Tokens**: Each interface uses its own BotFather bot (Telegram allows only one webhook per token)
+- **Shared Database**: Both agents share the same SQLite database

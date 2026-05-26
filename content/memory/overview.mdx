@@ -1,0 +1,123 @@
+---
+title: Brains with Recall: Memory 🧠
+sidebarTitle: Overview
+description: "Give your agents the ability to remember user preferences, context, and habits across conversations."
+keywords: [memory, agent memory, user memories, persistent memory, session history, automatic memory, agentic memory, user preferences, context retention]
+mode: wide
+---
+
+Imagine a support assistant that remembers your shipping address from last month, or a coding partner that knows you prefer tabs over spaces. 
+
+That's the power of **Memory** in Kern! 🧠
+
+When relevant facts appear in conversation, an agent with Memory extracts them, stores them in a database, and recalls them when they become relevant again. The agent dynamically learns about each user over time.
+
+---
+
+## 💡 Memory vs. Session History
+
+It's easy to get these two confused:
+
+* **Session History (Short-term continuity) 💬**: Stores raw messages so the model remembers what you just said in the current thread ("What did we just talk about?").
+* **Memory (Long-term recall) 🧠**: Stores extracted facts about the user across days, weeks, and different sessions ("What are Sarah's food preferences?").
+
+---
+
+## 🛠️ Bootstrapping Memory
+
+To give your agent a memory, connect a database and turn on `update_memory_on_run=True`:
+
+```python agent_memory.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+
+# 1. Setup your database to store memories 💾
+db = SqliteDb(db_file="tmp/agent_data.db")
+
+# 2. Spawn the agent with memory enabled
+agent = Agent(
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    db=db,
+    update_memory_on_run=True,  # Extractor runs automatically! 🧠
+    markdown=True,
+)
+
+# Run 1: Tell the agent a preference
+agent.print_response("Hey! My name is John and I write code in Python.", user_id="user_42")
+
+# Run 2: Test if the agent remembers!
+agent.print_response("What language should I use to write this script?", user_id="user_42")
+```
+
+---
+
+## 🔄 Two Memory Topologies
+
+Depending on how much control you want to give the model, Kern supports two memory strategies:
+
+### 1. Automatic Memory (`update_memory_on_run=True`)
+After each run completes, Kern runs a background extraction task to identify user facts, update preferences, and save them. This is predictable and works perfectly for standard assistant bots.
+
+### 2. Agentic Memory (`enable_agentic_memory=True`)
+The agent is equipped with memory management tools. It decides when to create, search, update, or delete memories on its own based on the flow of conversation. 
+*(Note: These two options are mutually exclusive; Agentic memory takes precedence if both are set.)*
+
+---
+
+## 💾 Where do memories live?
+
+Memories are stored in your agent's database. By default, they are saved in a table named **`kern_memories`** (or a collection of the same name for MongoDB). Kern creates this table automatically on its first run.
+
+You can customize the table name when initializing the database:
+
+```python
+from kern.db.postgres import PostgresDb
+
+db = PostgresDb(
+    db_url="postgresql://user:pass@localhost:5432/my_db",
+    memory_table="user_insights_table",  # Custom table name 🏷️
+)
+```
+
+### 🔍 Manual Retrieval
+
+You can query stored memories programmatically (e.g. to display a user profile in your frontend application):
+
+```python
+# Fetch raw memories for user_42
+user_memories = agent.get_user_memories(user_id="user_42")
+for memory in user_memories:
+    print(f"[{memory.topics}] {memory.memory}")
+```
+
+---
+
+## 📊 Memory Schema Reference
+
+Each row in `kern_memories` stores the following parameters:
+
+| Field | Type | Description |
+| :--- | :--- | :--- |
+| `memory_id` | `str` | Unique identifier for this memory snippet. |
+| `memory` | `str` | The extracted fact (e.g., "User prefers Python"). |
+| `topics` | `list` | Categorized tags (e.g., `["programming_language"]`). |
+| `user_id` | `str` | Association ID for the user. |
+| `agent_id` | `str` | The specific agent that learned this memory. |
+| `updated_at` | `int` | Timestamp of the last modification. |
+
+---
+
+## 📚 Learn More
+
+<CardGroup cols={3}>
+  <Card title="Agent Memory 🤖" icon="robot" iconType="duotone" href="/memory/agent/overview">
+    Learn how single agents manage memory.
+  </Card>
+  <Card title="Team Memory 🤝" icon="users" iconType="duotone" href="/memory/team/overview">
+    Share learned insights across team members.
+  </Card>
+  <Card title="Best Practices 🛡️" icon="shield-check" iconType="duotone" href="/memory/best-practices">
+    Optimize memory lookup and database indexes for production.
+  </Card>
+</CardGroup>

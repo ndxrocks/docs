@@ -1,0 +1,55 @@
+---
+title: Install & Setup
+---
+
+## Install `kern` SDK
+
+We highly recommend:
+
+- Installing `kern` using `pip` in a python virtual environment.
+
+<Steps>
+  <Step title="Create a virtual environment">
+    <CodeGroup>
+
+    ```bash Mac
+    python3 -m venv ~/.venvs/kern
+    source ~/.venvs/kern/bin/activate
+    ```
+
+    ```bash Windows
+    python3 -m venv agnoenv
+    agnoenv/scripts/activate
+    ```
+
+    </CodeGroup>
+
+  </Step>
+  <Step title="Install kern">
+    Install `kern` using pip
+
+    ```bash
+    pip install -U kern-ai
+    ```
+
+  </Step>
+</Steps>
+
+<br />
+
+<Note>
+
+If you encounter errors, try updating pip using `python -m pip install --upgrade pip`
+
+</Note>
+
+---
+
+## Upgrade kern
+
+To upgrade `kern`, run this in your virtual environment
+
+```bash
+pip install -U kern-ai --no-cache-dir
+```
+

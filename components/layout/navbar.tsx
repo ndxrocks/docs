@@ -19,10 +19,12 @@ export function Navbar() {
 
   return (
     <header className="fixed top-4 left-0 right-0 z-50 px-4 flex justify-center">
-      <div className={cn(
-        "w-full max-w-5xl border border-white/10 bg-black/70 backdrop-blur-xl shadow-xl shadow-black/40 transition-all duration-300",
-        mobileOpen ? "rounded-2xl" : "rounded-full"
-      )}>
+      <div
+        className={cn(
+          "w-full max-w-5xl border border-white/10 bg-black/70 backdrop-blur-xl shadow-xl shadow-black/40 transition-all duration-300",
+          mobileOpen ? "rounded-2xl" : "rounded-full",
+        )}
+      >
         <div className="flex h-14 items-center justify-between px-6">
           <Link href="/" className="flex items-center">
             <Image
@@ -30,7 +32,7 @@ export function Navbar() {
               alt="Kern"
               width={110}
               height={30}
-              className="h-4.5 w-auto"
+              className="h-5 w-auto"
               priority
             />
           </Link>
@@ -73,7 +75,11 @@ export function Navbar() {
             className="text-zinc-400 md:hidden rounded-full hover:bg-white/5"
             onClick={() => setMobileOpen(!mobileOpen)}
           >
-            {mobileOpen ? <X className="size-5" /> : <Menu className="size-5" />}
+            {mobileOpen ? (
+              <X className="size-5" />
+            ) : (
+              <Menu className="size-5" />
+            )}
           </Button>
         </div>
 

@@ -1,0 +1,55 @@
+---
+title: "Kern MCP"
+description: "Demo: Kern MCP Capability."
+---
+```python
+"""
+Kern Mcp
+=============================
+
+Demonstrates kern mcp.
+"""
+
+import asyncio
+
+from kern.agent import Agent
+from kern.models.anthropic import Claude
+from kern.tools.mcp import MCPTools
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+
+
+async def run_agent(message: str) -> None:
+    async with MCPTools(
+        transport="streamable-http", url="https://kern.ndx.rocks/mcp"
+    ) as agno_mcp_server:
+        agent = Agent(
+            model=Claude(id="claude-sonnet-4-0"),
+            tools=[agno_mcp_server],
+            markdown=True,
+        )
+        await agent.aprint_response(input=message, stream=True)
+
+
+# ---------------------------------------------------------------------------
+# Run Agent
+# ---------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    asyncio.run(run_agent("What is Kern?"))
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/91_tools/mcp
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python agno_mcp.py
+```

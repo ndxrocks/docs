@@ -1,0 +1,56 @@
+---
+title: "LangWatch Integration"
+description: "Demonstrates instrumenting an Kern agent and sending traces to LangWatch."
+---
+```python
+"""
+LangWatch Integration
+=====================
+
+Demonstrates instrumenting an Kern agent and sending traces to LangWatch.
+"""
+
+import langwatch
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.yfinance import YFinanceTools
+from openinference.instrumentation.kern import AgnoInstrumentor
+
+# ---------------------------------------------------------------------------
+# Setup
+# ---------------------------------------------------------------------------
+# Initialize LangWatch and instrument Kern
+langwatch.setup(instrumentors=[AgnoInstrumentor()])
+
+
+# ---------------------------------------------------------------------------
+# Create Agent
+# ---------------------------------------------------------------------------
+agent = Agent(
+    name="Stock Price Agent",
+    model=OpenAIChat(id="gpt-5.2"),
+    tools=[YFinanceTools()],
+    instructions="You are a stock price agent. Answer questions in the style of a stock analyst.",
+    debug_mode=True,
+)
+
+
+# ---------------------------------------------------------------------------
+# Run Example
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    agent.print_response("What is the current price of Tesla?")
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/92_integrations/observability
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python langwatch_op.py
+```

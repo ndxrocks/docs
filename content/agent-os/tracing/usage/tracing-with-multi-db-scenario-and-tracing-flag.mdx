@@ -1,0 +1,90 @@
+---
+title: Multi-DB Tracing with tracing=True
+description: Trace agents with multiple databases using tracing=True in AgentOS.
+sidebarTitle: Multi-DB with tracing=True
+keywords: [tracing, observability, agents, databases, kern, opentelemetry]
+mode: wide
+---
+
+This example shows how to configure tracing when agents have separate databases using the `tracing=True` flag. A dedicated `db` ensures all traces are stored in one central location.
+
+<Steps>
+
+  <Step title="Create a Python file">
+    ```python tracing_multi_db_flag.py
+    from kern.agent import Agent
+    from kern.db.sqlite import SqliteDb
+    from kern.models.openai import OpenAIResponses
+    from kern.os import AgentOS
+    from kern.tools.hackernews import HackerNewsTools
+    from kern.tools.hackernews import HackerNewsTools
+
+    # Set up databases - each agent has its own db
+    db1 = SqliteDb(db_file="tmp/db1.db", id="db1")
+    db2 = SqliteDb(db_file="tmp/db2.db", id="db2")
+
+    # Dedicated traces database
+    db = SqliteDb(db_file="tmp/traces.db", id="traces")
+
+    agent = Agent(
+        name="HackerNews Agent",
+        model=OpenAIResponses(id="gpt-5.2"),
+        tools=[HackerNewsTools()],
+        instructions="You are a hacker news agent. Answer questions concisely.",
+        markdown=True,
+        db=db1,
+    )
+
+    agent2 = Agent(
+        name="Web Search Agent",
+        model=OpenAIResponses(id="gpt-5.2"),
+        tools=[HackerNewsTools()],
+        instructions="You are a web search agent. Answer questions concisely.",
+        markdown=True,
+        db=db2,
+    )
+
+    # Setup AgentOS with tracing=True and dedicated db
+    # This ensures traces are written to and read from the same database
+    agent_os = AgentOS(
+        description="Example app for tracing with multiple databases",
+        agents=[agent, agent2],
+        tracing=True,
+        db=db,  # Dedicated database for traces
+    )
+    app = agent_os.get_app()
+
+    if __name__ == "__main__":
+        agent_os.serve(app="tracing_multi_db_flag:app", reload=True)
+    ```
+  </Step>
+
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U openai kern-ai opentelemetry-api opentelemetry-sdk openinference-instrumentation-kern-ai
+    ```
+  </Step>
+
+  <Step title="Export your OpenAI API key">
+    <CodeGroup>
+    ```bash Mac/Linux
+    export OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+
+    ```bash Windows
+    $Env:OPENAI_API_KEY="your_openai_api_key_here"
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Run AgentOS">
+    ```bash
+    python tracing_multi_db_flag.py
+    ```
+
+    Your AgentOS will be available at `http://localhost:7777`. View traces in the AgentOS dashboard.
+  </Step>
+
+</Steps>

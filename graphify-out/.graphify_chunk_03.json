@@ -1,0 +1,668 @@
+{
+  "nodes": [
+    {
+      "id": "node:docs-config",
+      "type": "module",
+      "label": "lib/docs-config.ts",
+      "properties": {
+        "kind": "typescript_module",
+        "exports": ["DocSection", "docsConfig"],
+        "description": "Defines documentation sidebar navigation configuration"
+      }
+    },
+    {
+      "id": "node:doc-section-iface",
+      "type": "interface",
+      "label": "DocSection",
+      "properties": {
+        "kind": "typescript_interface",
+        "fields": ["title: string", "href: string", "items?: DocSection[]"],
+        "description": "Recursive interface for doc navigation tree nodes"
+      }
+    },
+    {
+      "id": "node:docs-config-array",
+      "type": "data",
+      "label": "docsConfig",
+      "properties": {
+        "kind": "const_array",
+        "type": "DocSection[]",
+        "sections": ["Getting Started", "Agents", "Models", "Structured Output", "Tools", "Workflows", "Visualization", "Knowledge Base", "Storage"],
+        "description": "Ordered array of documentation sections for sidebar navigation"
+      }
+    },
+    {
+      "id": "node:doc-topic-agents",
+      "type": "concept",
+      "label": "Doc Topic: Agents",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/agents",
+        "sub_items": ["Overview"],
+        "description": "Agents documentation section with overview sub-page"
+      }
+    },
+    {
+      "id": "node:doc-topic-models",
+      "type": "concept",
+      "label": "Doc Topic: Models",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/models",
+        "description": "Models documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-structured-output",
+      "type": "concept",
+      "label": "Doc Topic: Structured Output",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/structured-output",
+        "description": "Structured Output documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-tools",
+      "type": "concept",
+      "label": "Doc Topic: Tools",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/tools",
+        "description": "Tools documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-workflows",
+      "type": "concept",
+      "label": "Doc Topic: Workflows",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/workflows",
+        "description": "Workflows documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-visualization",
+      "type": "concept",
+      "label": "Doc Topic: Visualization",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/visualization",
+        "description": "Visualization documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-knowledge",
+      "type": "concept",
+      "label": "Doc Topic: Knowledge Base",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/knowledge",
+        "description": "Knowledge Base documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-storage",
+      "type": "concept",
+      "label": "Doc Topic: Storage",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/storage",
+        "description": "Storage documentation section"
+      }
+    },
+    {
+      "id": "node:doc-topic-getting-started",
+      "type": "concept",
+      "label": "Doc Topic: Getting Started",
+      "properties": {
+        "kind": "doc_section",
+        "href": "/docs/getting-started",
+        "description": "Getting Started guide, entry point for new users"
+      }
+    },
+    {
+      "id": "node:utils",
+      "type": "module",
+      "label": "lib/utils.ts",
+      "properties": {
+        "kind": "typescript_module",
+        "exports": ["cn"],
+        "description": "Standard shadcn/ui utility for merging Tailwind CSS classes"
+      }
+    },
+    {
+      "id": "node:cn-fn",
+      "type": "function",
+      "label": "cn()",
+      "properties": {
+        "kind": "utility_function",
+        "signature": "cn(...inputs: ClassValue[]): string",
+        "dependencies": ["clsx", "tailwind-merge"],
+        "description": "Merges Tailwind CSS classes using clsx and twMerge, used across all UI components"
+      }
+    },
+    {
+      "id": "node:agents-md",
+      "type": "file",
+      "label": "AGENTS.md",
+      "properties": {
+        "kind": "markdown",
+        "description": "Agent rules file warning about Next.js breaking changes in this version"
+      }
+    },
+    {
+      "id": "node:claude-md",
+      "type": "file",
+      "label": "CLAUDE.md",
+      "properties": {
+        "kind": "markdown",
+        "description": "Project-level Claude instructions referencing AGENTS.md"
+      }
+    },
+    {
+      "id": "node:pnpm-workspace",
+      "type": "config",
+      "label": "pnpm-workspace.yaml",
+      "properties": {
+        "kind": "yaml_config",
+        "ignored_deps": ["sharp", "unrs-resolver"],
+        "description": "pnpm workspace config ignoring specific build dependencies"
+      }
+    },
+    {
+      "id": "node:logo-kern-dark",
+      "type": "asset",
+      "label": "public/logos/kern-dark.png",
+      "properties": {
+        "kind": "image",
+        "content_description": "Kern logo, modern bold geometric text, black and white color scheme",
+        "usage": "Dark variant of brand logo"
+      }
+    },
+    {
+      "id": "node:logo-kern-light",
+      "type": "asset",
+      "label": "public/logos/kern-light.png",
+      "properties": {
+        "kind": "image",
+        "content_description": "Kern logo, minimalist modern typographic style, light variant",
+        "usage": "Light variant of brand logo"
+      }
+    },
+    {
+      "id": "node:blog-benchmarks",
+      "type": "asset",
+      "label": "public/blog/benchmarks.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Stylized bar and line chart with futuristic neon aesthetic, cyan-to-purple gradient bars on dark grid background",
+        "topic": "benchmarks"
+      }
+    },
+    {
+      "id": "node:blog-benchmarks-2",
+      "type": "asset",
+      "label": "public/blog/benchmarks-2.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "LEADERBOARD bar chart with 11 categories, blue-purple gradient on dark background",
+        "topic": "benchmarks"
+      }
+    },
+    {
+      "id": "node:blog-local-llms",
+      "type": "asset",
+      "label": "public/blog/local-llms.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Server room illustration with Local LLM UI on screen, blue and purple neon lighting",
+        "topic": "local-llms"
+      }
+    },
+    {
+      "id": "node:blog-local-llms-2",
+      "type": "asset",
+      "label": "public/blog/local-llms-2.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "GPU chip close-up (GTX GF114), dramatic blue and purple lighting",
+        "topic": "local-llms"
+      }
+    },
+    {
+      "id": "node:blog-observability",
+      "type": "asset",
+      "label": "public/blog/observability.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Multi-line time-series chart, dark theme, purple, cyan, and dark blue lines on grid background",
+        "topic": "observability"
+      }
+    },
+    {
+      "id": "node:blog-observability-2",
+      "type": "asset",
+      "label": "public/blog/observability-2.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Multi-line trend chart with purple, cyan, and dark blue lines on dark background",
+        "topic": "observability"
+      }
+    },
+    {
+      "id": "node:blog-reliability",
+      "type": "asset",
+      "label": "public/blog/reliability.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Five layered translucent rectangular panels, blue and purple gradients, abstract tech layers on black",
+        "topic": "reliability"
+      }
+    },
+    {
+      "id": "node:blog-reliability-2",
+      "type": "asset",
+      "label": "public/blog/reliability-2.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Network nodes visualization, neural network style, purple, pink, and blue glowing nodes connected by lines",
+        "topic": "reliability"
+      }
+    },
+    {
+      "id": "node:blog-structured-output",
+      "type": "asset",
+      "label": "public/blog/structured-output.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Neon JSON text with purple-pink glow and geometric wireframe mesh, floating geometric shapes on black",
+        "topic": "structured-output"
+      }
+    },
+    {
+      "id": "node:blog-structured-output-2",
+      "type": "asset",
+      "label": "public/blog/structured-output-2.jpg",
+      "properties": {
+        "kind": "image",
+        "content_description": "Dark UI with green neon JSON button and red neon Repair button, cyan-to-purple gradient progress container",
+        "topic": "structured-output"
+      }
+    },
+    {
+      "id": "node:svg-file",
+      "type": "asset",
+      "label": "public/file.svg",
+      "properties": {
+        "kind": "svg_icon",
+        "content_description": "Document/file icon SVG"
+      }
+    },
+    {
+      "id": "node:svg-globe",
+      "type": "asset",
+      "label": "public/globe.svg",
+      "properties": {
+        "kind": "svg_icon",
+        "content_description": "Globe/world icon SVG"
+      }
+    },
+    {
+      "id": "node:svg-next",
+      "type": "asset",
+      "label": "public/next.svg",
+      "properties": {
+        "kind": "svg_icon",
+        "content_description": "Next.js logo SVG"
+      }
+    },
+    {
+      "id": "node:svg-vercel",
+      "type": "asset",
+      "label": "public/vercel.svg",
+      "properties": {
+        "kind": "svg_icon",
+        "content_description": "Vercel triangle logo SVG"
+      }
+    },
+    {
+      "id": "node:svg-window",
+      "type": "asset",
+      "label": "public/window.svg",
+      "properties": {
+        "kind": "svg_icon",
+        "content_description": "Browser window icon SVG"
+      }
+    },
+    {
+      "id": "node:kern-brand",
+      "type": "concept",
+      "label": "Kern Brand Identity",
+      "properties": {
+        "kind": "brand",
+        "description": "Framework for smaller LLMs, visual identity uses dark themes with neon cyan and purple gradients"
+      }
+    },
+    {
+      "id": "node:nextjs-breaking-changes",
+      "type": "concept",
+      "label": "Next.js Breaking Changes Convention",
+      "properties": {
+        "kind": "architectural_concern",
+        "description": "Project uses a non-standard Next.js version with breaking changes; AGENTS.md warns all contributors to check node_modules/next/dist/docs/"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "node:docs-config",
+      "target": "node:doc-section-iface",
+      "relation": "exports",
+      "confidence": 1.0,
+      "properties": {
+        "description": "docs-config.ts exports the DocSection interface"
+      }
+    },
+    {
+      "source": "node:docs-config",
+      "target": "node:docs-config-array",
+      "relation": "exports",
+      "confidence": 1.0,
+      "properties": {
+        "description": "docs-config.ts exports the docsConfig constant array"
+      }
+    },
+    {
+      "source": "node:doc-section-iface",
+      "target": "node:docs-config-array",
+      "relation": "types",
+      "confidence": 1.0,
+      "properties": {
+        "description": "DocSection interface defines the type of each element in docsConfig"
+      }
+    },
+    {
+      "source": "node:doc-section-iface",
+      "target": "node:doc-section-iface",
+      "relation": "recursive_self_reference",
+      "confidence": 1.0,
+      "properties": {
+        "description": "DocSection.items is DocSection[], making the nav tree recursive"
+      }
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-agents",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-models",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-structured-output",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-tools",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-workflows",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-visualization",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-knowledge",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-storage",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:docs-config-array",
+      "target": "node:doc-topic-getting-started",
+      "relation": "contains",
+      "confidence": 1.0
+    },
+    {
+      "source": "node:utils",
+      "target": "node:cn-fn",
+      "relation": "exports",
+      "confidence": 1.0,
+      "properties": {
+        "description": "lib/utils.ts exports the cn utility function"
+      }
+    },
+    {
+      "source": "node:claude-md",
+      "target": "node:agents-md",
+      "relation": "references",
+      "confidence": 1.0,
+      "properties": {
+        "description": "CLAUDE.md uses @AGENTS.md include directive"
+      }
+    },
+    {
+      "source": "node:agents-md",
+      "target": "node:nextjs-breaking-changes",
+      "relation": "defines",
+      "confidence": 0.95,
+      "properties": {
+        "description": "AGENTS.md establishes the convention of checking for Next.js breaking changes"
+      }
+    },
+    {
+      "source": "node:logo-kern-dark",
+      "target": "node:kern-brand",
+      "relation": "represents",
+      "confidence": 0.95,
+      "properties": {
+        "description": "Dark variant of the Kern brand logo"
+      }
+    },
+    {
+      "source": "node:logo-kern-light",
+      "target": "node:kern-brand",
+      "relation": "represents",
+      "confidence": 0.95,
+      "properties": {
+        "description": "Light variant of the Kern brand logo"
+      }
+    },
+    {
+      "source": "node:logo-kern-dark",
+      "target": "node:logo-kern-light",
+      "relation": "semantically_similar_to",
+      "confidence": 0.98,
+      "properties": {
+        "description": "Same logo design in dark and light color variants"
+      }
+    },
+    {
+      "source": "node:blog-benchmarks",
+      "target": "node:blog-benchmarks-2",
+      "relation": "semantically_similar_to",
+      "confidence": 0.92,
+      "properties": {
+        "description": "Paired blog images both depicting benchmark/chart visualizations in neon futuristic style"
+      }
+    },
+    {
+      "source": "node:blog-local-llms",
+      "target": "node:blog-local-llms-2",
+      "relation": "semantically_similar_to",
+      "confidence": 0.88,
+      "properties": {
+        "description": "Paired blog images both related to local LLM hardware and infrastructure"
+      }
+    },
+    {
+      "source": "node:blog-observability",
+      "target": "node:blog-observability-2",
+      "relation": "semantically_similar_to",
+      "confidence": 0.94,
+      "properties": {
+        "description": "Paired blog images both showing multi-line time-series monitoring charts"
+      }
+    },
+    {
+      "source": "node:blog-reliability",
+      "target": "node:blog-reliability-2",
+      "relation": "semantically_similar_to",
+      "confidence": 0.82,
+      "properties": {
+        "description": "Paired blog images both representing reliability concepts through abstract tech visualizations (layers and networks)"
+      }
+    },
+    {
+      "source": "node:blog-structured-output",
+      "target": "node:blog-structured-output-2",
+      "relation": "semantically_similar_to",
+      "confidence": 0.85,
+      "properties": {
+        "description": "Paired blog images both about structured output/JSON, one showing neon JSON text art, other showing JSON validation UI"
+      }
+    },
+    {
+      "source": "node:doc-topic-structured-output",
+      "target": "node:blog-structured-output",
+      "relation": "conceptually_related_to",
+      "confidence": 0.9,
+      "properties": {
+        "description": "Structured Output doc topic and blog images share the same JSON/structured data theme"
+      }
+    },
+    {
+      "source": "node:doc-topic-visualization",
+      "target": "node:blog-observability",
+      "relation": "conceptually_related_to",
+      "confidence": 0.78,
+      "properties": {
+        "description": "Visualization doc topic relates to observability blog imagery showing data chart visualizations"
+      }
+    },
+    {
+      "source": "node:doc-topic-agents",
+      "target": "node:blog-reliability",
+      "relation": "conceptually_related_to",
+      "confidence": 0.7,
+      "properties": {
+        "description": "Agent reliability is a core concern; blog reliability imagery illustrates layered and networked agent architectures"
+      }
+    },
+    {
+      "source": "node:doc-topic-models",
+      "target": "node:blog-local-llms",
+      "relation": "conceptually_related_to",
+      "confidence": 0.82,
+      "properties": {
+        "description": "Models doc topic relates to local-llms blog imagery depicting hardware and infrastructure for running models locally"
+      }
+    },
+    {
+      "source": "node:doc-topic-models",
+      "target": "node:blog-benchmarks",
+      "relation": "conceptually_related_to",
+      "confidence": 0.75,
+      "properties": {
+        "description": "Models documentation would reference benchmark data; blog benchmark imagery visualizes model performance"
+      }
+    },
+    {
+      "source": "node:docs-config",
+      "target": "node:cn-fn",
+      "relation": "indirectly_used_by",
+      "confidence": 0.6,
+      "properties": {
+        "description": "docs-config is consumed by sidebar/nav components which use cn() for class merging"
+      }
+    },
+    {
+      "source": "node:svg-file",
+      "target": "node:kern-brand",
+      "relation": "part_of",
+      "confidence": 0.5,
+      "properties": {
+        "description": "Generic file icon, likely used in doc UI alongside brand elements"
+      }
+    },
+    {
+      "source": "node:svg-globe",
+      "target": "node:kern-brand",
+      "relation": "part_of",
+      "confidence": 0.5,
+      "properties": {
+        "description": "Globe icon, may be used in footer or links section"
+      }
+    },
+    {
+      "source": "node:svg-next",
+      "target": "node:nextjs-breaking-changes",
+      "relation": "represents",
+      "confidence": 0.8,
+      "properties": {
+        "description": "Next.js logo SVG represents the framework the project is built on"
+      }
+    },
+    {
+      "source": "node:svg-vercel",
+      "target": "node:svg-next",
+      "relation": "semantically_similar_to",
+      "confidence": 0.7,
+      "properties": {
+        "description": "Vercel logo paired with Next.js logo, both from the same ecosystem"
+      }
+    }
+  ],
+  "hyperedges": [
+    {
+      "id": "hyperedge:doc-nav-architecture",
+      "nodes": ["node:docs-config", "node:doc-section-iface", "node:docs-config-array", "node:cn-fn"],
+      "relation": "architectural_pattern",
+      "confidence": 0.85,
+      "properties": {
+        "description": "Documentation navigation follows a recursive tree pattern defined by DocSection interface. The docsConfig array holds root nodes, and components rendering these use cn() for style composition. This is the shadcn/ui + Next.js docs site pattern."
+      }
+    },
+    {
+      "id": "hyperedge:blog-visual-system",
+      "nodes": ["node:blog-benchmarks", "node:blog-benchmarks-2", "node:blog-local-llms", "node:blog-local-llms-2", "node:blog-observability", "node:blog-observability-2", "node:blog-reliability", "node:blog-reliability-2", "node:blog-structured-output", "node:blog-structured-output-2", "node:kern-brand"],
+      "relation": "visual_design_system",
+      "confidence": 0.88,
+      "properties": {
+        "description": "All blog images share a cohesive visual design system: dark backgrounds with neon cyan-to-purple gradients, futuristic/tech aesthetic. This aligns with the Kern brand identity. Each topic has a primary and secondary variant image."
+      }
+    },
+    {
+      "id": "hyperedge:docs-topics-to-blog-content",
+      "nodes": ["node:doc-topic-agents", "node:doc-topic-models", "node:doc-topic-structured-output", "node:doc-topic-visualization", "node:blog-benchmarks", "node:blog-local-llms", "node:blog-observability", "node:blog-reliability", "node:blog-structured-output"],
+      "relation": "content_cross_reference",
+      "confidence": 0.75,
+      "properties": {
+        "description": "Documentation topics and blog images form a content cross-reference network. Agent reliability, model benchmarks, structured output (JSON), and visualization (observability charts) are themes shared between the docs sections and blog imagery."
+      }
+    }
+  ]
+}

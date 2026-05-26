@@ -1,0 +1,44 @@
+---
+title: Agent with Tools
+---
+
+## Code
+
+```python cookbook/11_models/nvidia/tool_use.py
+from kern.agent import Agent
+from kern.models.nvidia import Nvidia
+from kern.tools.hackernews import HackerNewsTools
+
+agent = Agent(
+    model=Nvidia(id="meta/llama-3.3-70b-instruct"),
+    tools=[HackerNewsTools()],
+    markdown=True,
+)
+
+agent.print_response("Whats happening in France?", stream=True)
+
+```
+
+## Usage
+
+<Steps>
+  <Snippet file="create-venv-step.mdx" />
+
+  <Step title="Set your API key">
+    ```bash
+    export NVIDIA_API_KEY=xxx
+    ```
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U kern-ai
+    ```
+  </Step>
+
+  <Step title="Run Agent">
+    ```bash
+    python cookbook/11_models/nvidia/tool_use.py
+    ```
+  </Step>
+</Steps>

@@ -1,0 +1,188 @@
+---
+title: "Deploy to Railway"
+sidebarTitle: "Deploy"
+description: "Deploy AgentOS to Railway with PostgreSQL, automatic HTTPS, and a public domain."
+---
+
+This template deploys AgentOS and PostgreSQL to Railway. It includes agents you can extend with Claude Code, automatic HTTPS, and a public domain.
+
+## Prerequisites
+
+- [Docker Desktop](https://docker.com/desktop)
+- [OpenAI API key](https://platform.openai.com)
+
+## Development
+
+Run locally before deploying to Railway.
+
+<Steps>
+  <Step title="Clone the template">
+```bash
+git clone \
+  https://github.com/kern-agi/agentos-railway-template.git \
+  agentos
+
+cd agentos
+```
+
+The template includes the following agents:
+
+| Agent | Pattern | Description |
+| :--- | :--- | :--- |
+| WebSearch | Direct tools | Search the web using Parallel SDK or keyless MCP. |
+| CodeSearch | Context provider | Answer questions about this codebase. |
+  </Step>
+
+  <Step title="Set your API key">
+```bash
+cp example.env .env
+```
+
+Edit `.env` and add your `OPENAI_API_KEY`.
+  </Step>
+
+  <Step title="Start AgentOS">
+```bash
+docker compose up -d --build
+```
+  </Step>
+
+  <Step title="Confirm it's running">
+
+Navigate to [localhost:8000/docs](http://localhost:8000/docs) to see your AgentOS API.
+
+  </Step>
+
+  <Step title="Connect to the control plane">
+
+1. Go to [os.kern.ndx.rocks](https://os.kern.ndx.rocks)
+2. Click **Connect OS** → Select **Local**
+3. Enter `http://localhost:8000`
+
+  </Step>
+</Steps>
+
+<Check>Your AgentOS is running locally.</Check>
+
+## Production
+
+Deploy to Railway when you're ready to go live.
+
+### Prerequisites
+
+- [Railway account](https://railway.app) (free tier works)
+- [Railway CLI](https://docs.railway.com/cli#installing-the-cli)
+
+<Steps>
+  <Step title="Login to Railway">
+```bash
+railway login
+```
+
+  </Step>
+
+  <Step title="Set up production env">
+```bash
+cp .env .env.production
+```
+
+Edit `.env.production` with production values. The deploy scripts read `.env.production` first and fall back to `.env`.
+
+  </Step>
+
+  <Step title="Deploy">
+```bash
+./scripts/railway/up.sh
+```
+
+Takes ~2 minutes. The script creates your Railway project, provisions PostgreSQL with pgvector, and deploys AgentOS.
+
+  </Step>
+
+  <Step title="Get your verification key">
+
+Your first deploy will fail by design. Token-Based Authorization is on by default.
+
+1. Go to [os.kern.ndx.rocks](https://os.kern.ndx.rocks)
+2. Click **Connect OS** → Select **Live**
+3. Enter your Railway domain
+4. Enable **Token Based Authorization**
+5. Copy the public key into `.env.production`:
+
+```bash
+JWT_VERIFICATION_KEY=-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkq...
+-----END PUBLIC KEY-----
+```
+
+  </Step>
+
+  <Step title="Sync env and verify">
+
+Point the scheduler at your Railway domain:
+
+```bash
+# In .env.production
+AGENTOS_URL=https://<your-app>.up.railway.app
+```
+
+Push variables to Railway:
+
+```bash
+./scripts/railway/env-sync.sh
+```
+
+Railway auto-deploys when env values change.
+
+  </Step>
+
+  <Step title="Confirm it's live">
+```bash
+railway logs --service agent-os
+```
+
+Navigate to `<your-domain>/docs` to confirm the API is running.
+
+<Frame>
+  <img
+    className="block dark:hidden"
+    src="/images/agent-os-connection-railway-light.png"
+    alt="AgentOS connection dialog"
+  />
+  <img
+    className="hidden dark:block"
+    src="/images/agent-os-connection-railway.png"
+    alt="AgentOS connection dialog"
+  />
+</Frame>
+
+  </Step>
+</Steps>
+
+<Check>Your AgentOS is live on Railway.</Check>
+
+## Environment Variables
+
+| Variable | Required | Description |
+| :--- | :--- | :--- |
+| `OPENAI_API_KEY` | Yes | OpenAI API key |
+| `RUNTIME_ENV` | No | `dev` enables hot-reload and disables JWT |
+| `JWT_VERIFICATION_KEY` | Production | Public key from os.kern.ndx.rocks |
+| `AGENTOS_URL` | No | Scheduler base URL (default: `http://127.0.0.1:8000`) |
+| `SLACK_BOT_TOKEN` | No | Enable Slack interface |
+| `SLACK_SIGNING_SECRET` | No | Enable Slack interface |
+| `PARALLEL_API_KEY` | No | Parallel SDK key for WebSearch |
+
+## Next Steps
+
+<CardGroup cols={3}>
+  <Card title="Extend" icon="wand-magic-sparkles" href="/deploy/templates/improve-agents">
+    Build and improve agents with Claude Code and evals.
+  </Card>
+  <Card title="Interfaces" icon="comments" href="/deploy/interfaces">
+    Connect Slack, Discord, WhatsApp, or MCP.
+  </Card>
+  <Card title="Reference" icon="book" href="/deploy/templates/railway/reference">
+    Manage, customize, and troubleshoot.
+  </Card>
+</CardGroup>

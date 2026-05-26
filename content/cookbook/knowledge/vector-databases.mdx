@@ -1,0 +1,226 @@
+---
+title: Vector Databases
+description: 25+ vector databases with a unified interface for knowledge storage and retrieval.
+---
+
+Kern supports 25+ vector databases with a unified interface. Switch databases by changing one line of code.
+
+```python
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.pgvector import PgVector
+
+knowledge = Knowledge(
+    vector_db=PgVector(table_name="docs", db_url="postgresql://..."),
+)
+```
+
+## Supported Databases
+
+| Database | Import | Best For |
+|----------|--------|----------|
+| PgVector | `from kern.vectordb.pgvector import PgVector` | PostgreSQL users, production |
+| Pinecone | `from kern.vectordb.pineconedb import PineconeDb` | Managed, serverless |
+| Qdrant | `from kern.vectordb.qdrant import Qdrant` | High performance, filtering |
+| Weaviate | `from kern.vectordb.weaviate import Weaviate` | Hybrid search, GraphQL |
+| Milvus | `from kern.vectordb.milvus import Milvus` | Scale, distributed |
+| ChromaDB | `from kern.vectordb.chroma import ChromaDb` | Local development, prototyping |
+| LanceDB | `from kern.vectordb.lancedb import LanceDb` | Embedded, serverless |
+| MongoDB | `from kern.vectordb.mongodb import MongoVectorDb` | Document store users |
+| Redis | `from kern.vectordb.redis import RedisVectorDb` | Low latency, caching |
+| Cassandra | `from kern.vectordb.cassandra import Cassandra` | Scale, distributed |
+| ClickHouse | `from kern.vectordb.clickhouse import ClickHouse` | Analytics, OLAP |
+| SingleStore | `from kern.vectordb.singlestore import SingleStore` | Real-time analytics |
+| Upstash | `from kern.vectordb.upstash import Upstash` | Serverless, edge |
+| Couchbase | `from kern.vectordb.couchbase import Couchbase` | Mobile, edge sync |
+| SurrealDB | `from kern.vectordb.surrealdb import SurrealDB` | Multi-model |
+
+## Examples by Database
+
+### PgVector
+
+PostgreSQL extension for vector similarity search.
+
+```python cookbook/07_knowledge/vector_db/pgvector/pgvector_db.py
+from kern.agent import Agent
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.pgvector import PgVector
+
+knowledge = Knowledge(
+    vector_db=PgVector(
+        table_name="documents",
+        db_url="postgresql+psycopg://ai:ai@localhost:5532/ai",
+    ),
+)
+
+knowledge.insert(url="https://example.com/docs.pdf")
+
+agent = Agent(knowledge=knowledge, search_knowledge=True)
+agent.print_response("Summarize the documentation")
+```
+
+### Hybrid Search with PgVector
+
+Combine vector and keyword search.
+
+```python cookbook/07_knowledge/vector_db/pgvector/pgvector_hybrid_search.py
+from kern.vectordb.pgvector import PgVector, SearchType
+
+vector_db = PgVector(
+    table_name="vectors",
+    db_url="postgresql+psycopg://ai:ai@localhost:5532/ai",
+    search_type=SearchType.hybrid,
+)
+```
+
+### Pinecone
+
+Fully managed vector database.
+
+```python cookbook/07_knowledge/vector_db/pinecone_db/pinecone_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.pineconedb import PineconeDb
+
+knowledge = Knowledge(
+    vector_db=PineconeDb(
+        name="thai-recipe-index",
+        dimension=1536,
+        metric="cosine",
+        spec={"serverless": {"cloud": "aws", "region": "us-east-1"}},
+    ),
+)
+```
+
+### Qdrant
+
+High-performance vector database with rich filtering.
+
+```python cookbook/07_knowledge/vector_db/qdrant_db/qdrant_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.qdrant import Qdrant
+
+knowledge = Knowledge(
+    vector_db=Qdrant(
+        collection="documents",
+        url="http://localhost:6333",
+    ),
+)
+```
+
+### Weaviate
+
+Vector database with hybrid search and GraphQL.
+
+```python cookbook/07_knowledge/vector_db/weaviate_db/weaviate_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.weaviate import Weaviate
+from kern.vectordb.search import SearchType
+
+knowledge = Knowledge(
+    vector_db=Weaviate(
+        collection="vectors",
+        search_type=SearchType.vector,
+        local=False,
+    ),
+)
+```
+
+### Milvus
+
+Distributed vector database for scale.
+
+```python cookbook/07_knowledge/vector_db/milvus_db/milvus_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.milvus import Milvus
+
+knowledge = Knowledge(
+    vector_db=Milvus(
+        collection="recipes",
+        uri="tmp/milvus.db",  # Local file or http://localhost:19530 for server
+    ),
+)
+```
+
+### ChromaDB
+
+Embedded vector database for development.
+
+```python cookbook/07_knowledge/vector_db/chroma_db/chroma_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.chroma import ChromaDb
+
+knowledge = Knowledge(
+    vector_db=ChromaDb(
+        collection="vectors",
+        path="tmp/chromadb",
+        persistent_client=True,
+    ),
+)
+```
+
+### LanceDB
+
+Serverless vector database with native Python.
+
+```python cookbook/07_knowledge/vector_db/lance_db/lance_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.lancedb import LanceDb
+
+knowledge = Knowledge(
+    vector_db=LanceDb(
+        table_name="vectors",
+        uri="tmp/lancedb",
+    ),
+)
+```
+
+### MongoDB Atlas
+
+Vector search on MongoDB.
+
+```python cookbook/07_knowledge/vector_db/mongo_db/mongo_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.mongodb import MongoVectorDb
+
+knowledge = Knowledge(
+    vector_db=MongoVectorDb(
+        collection_name="recipes",
+        db_url="mongodb+srv://<username>:<password>@cluster0.mongodb.net/...",
+        search_index_name="recipes",
+    ),
+)
+```
+
+### Redis
+
+In-memory vector search.
+
+```python cookbook/07_knowledge/vector_db/redis_db/redis_db.py
+from kern.knowledge.knowledge import Knowledge
+from kern.vectordb.redis import RedisVectorDb
+from kern.vectordb.search import SearchType
+
+knowledge = Knowledge(
+    vector_db=RedisVectorDb(
+        index_name="agno_cookbook_vectors",
+        redis_url="redis://localhost:6379/0",
+        search_type=SearchType.vector,
+    ),
+)
+```
+
+## Run Examples
+
+```bash
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/07_knowledge/vector_db
+
+# PgVector
+python pgvector/pgvector_db.py
+
+# Qdrant
+python qdrant_db/qdrant_db.py
+
+# ChromaDB (no external deps)
+python chroma_db/chroma_db.py
+```
+

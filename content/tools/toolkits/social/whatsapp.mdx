@@ -1,0 +1,121 @@
+---
+title: WhatsApp
+---
+
+**WhatsAppTools** enable an Agent to send messages via the WhatsApp Business API: text, templates, images, documents, locations, reactions, and interactive messages (reply buttons, list menus).
+
+## Prerequisites
+
+1. Create a Meta Developer Account at the [Meta Developer Portal](https://developers.facebook.com/).
+2. Create a new app at the [Apps Dashboard](https://developers.facebook.com/apps/) and add the **WhatsApp** product.
+3. Get your **Access Token** and **Phone Number ID** from **WhatsApp > API Setup**.
+
+```shell
+export WHATSAPP_ACCESS_TOKEN=your_access_token
+export WHATSAPP_PHONE_NUMBER_ID=your_phone_number_id
+```
+
+For standalone use (outside the WhatsApp interface), also set a default recipient:
+
+```shell
+export WHATSAPP_RECIPIENT_WAID=recipient_phone_number    # e.g. 1234567890
+```
+
+<Note>
+For first-time outreach to a user, you must use [pre-approved message templates](https://developers.facebook.com/docs/whatsapp/cloud-api/guides/send-message-templates). Test messages can only be sent to numbers registered in your test environment.
+</Note>
+
+## Example
+
+The following agent sends a template message using WhatsApp:
+
+```python cookbook/91_tools/whatsapp_tools.py
+from kern.agent import Agent
+from kern.models.google import Gemini
+from kern.tools.whatsapp import WhatsAppTools
+
+agent = Agent(
+    name="whatsapp",
+    model=Gemini(id="gemini-3-flash-preview"),
+    tools=[WhatsAppTools()],
+)
+
+agent.print_response(
+    "Send a template message using the 'hello_world' template in English to +1 1234567890"
+)
+```
+
+### Interactive Concierge Example
+
+Use interactive features like reply buttons, list messages, and location pins:
+
+```python
+from kern.tools.whatsapp import WhatsAppTools
+
+tools = WhatsAppTools(
+    enable_send_reply_buttons=True,
+    enable_send_list_message=True,
+    enable_send_location=True,
+    enable_send_reaction=True,
+    enable_send_image=True,
+)
+```
+
+See `cookbook/05_agent_os/interfaces/whatsapp/interactive_concierge.py` for a full example.
+
+## Toolkit Params
+
+| Parameter                       | Type             | Default   | Description                                                                                         |
+| ------------------------------- | ---------------- | --------- | --------------------------------------------------------------------------------------------------- |
+| `access_token`                  | `Optional[str]`  | `None`    | WhatsApp Business API access token. Falls back to `WHATSAPP_ACCESS_TOKEN` env var.                  |
+| `phone_number_id`               | `Optional[str]`  | `None`    | WhatsApp Business phone number ID. Falls back to `WHATSAPP_PHONE_NUMBER_ID` env var.                |
+| `version`                       | `Optional[str]`  | `None`    | API version (e.g., `"v22.0"`). Falls back to `WHATSAPP_VERSION` env var, then defaults to `v22.0`. |
+| `recipient_waid`                | `Optional[str]`  | `None`    | Default recipient WhatsApp ID. Falls back to `WHATSAPP_RECIPIENT_WAID` env var.                     |
+| `enable_send_text_message`      | `bool`           | `True`    | Enable the `send_text_message` tool.                                                                |
+| `enable_send_template_message`  | `bool`           | `True`    | Enable the `send_template_message` tool.                                                            |
+| `enable_send_reply_buttons`     | `bool`           | `False`   | Enable the `send_reply_buttons` tool.                                                               |
+| `enable_send_list_message`      | `bool`           | `False`   | Enable the `send_list_message` tool.                                                                |
+| `enable_send_image`             | `bool`           | `False`   | Enable the `send_image` tool.                                                                       |
+| `enable_send_document`          | `bool`           | `False`   | Enable the `send_document` tool.                                                                    |
+| `enable_send_location`          | `bool`           | `False`   | Enable the `send_location` tool.                                                                    |
+| `enable_send_reaction`          | `bool`           | `False`   | Enable the `send_reaction` tool.                                                                    |
+| `all`                           | `bool`           | `False`   | Enable all tools when set to `True`.                                                                |
+
+## Toolkit Functions
+
+| Function                 | Description                                                                                                          |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `send_text_message`      | Send a text message. Params: `text`, `recipient` (optional), `preview_url` (bool).                                   |
+| `send_template_message`  | Send a pre-approved template. Params: `template_name`, `recipient` (optional), `language_code`, `components`.        |
+| `send_reply_buttons`     | Send an interactive reply-button message (max 3 buttons). Params: `body_text`, `buttons` (list of `ReplyButton`), `recipient`, `header`, `footer`. |
+| `send_list_message`      | Send an interactive list menu (max 10 sections, 10 rows total). Params: `body_text`, `button_text`, `sections` (list of `ListSection`), `recipient`, `header`, `footer`. |
+| `send_image`             | Send an image by URL or media ID. Params: `recipient`, `image_url`, `media_id`, `caption`.                           |
+| `send_document`          | Send a document by URL or media ID. Params: `recipient`, `document_url`, `media_id`, `filename`, `caption`.          |
+| `send_location`          | Send a location pin. Params: `latitude`, `longitude`, `name`, `address`, `recipient`.                                |
+| `send_reaction`          | React to a message with an emoji. Params: `message_id`, `emoji`, `recipient`.                                        |
+
+### Interactive Message Models
+
+The toolkit includes Pydantic models for structured interactive messages:
+
+**`ReplyButton`**: A quick-reply button for `send_reply_buttons`.
+- `id` (str): Unique button identifier (e.g., `"yes"`, `"no"`).
+- `title` (str): Button display text, max 20 characters.
+
+**`ListSection`**: A section for `send_list_message`, containing `ListRow` items.
+- `title` (str): Section heading.
+- `rows` (list of `ListRow`): Selectable rows.
+
+**`ListRow`**: A selectable row inside a `ListSection`.
+- `id` (str): Unique row identifier.
+- `title` (str): Row title text.
+- `description` (str, optional): Row description.
+
+```python
+from kern.tools.whatsapp import ReplyButton, ListSection, ListRow
+```
+
+## Developer Resources
+
+- [Tools](https://github.com/kern-ai/kern/blob/main/libs/kern/kern/tools/whatsapp.py)
+- [WhatsApp Interface Cookbooks](https://github.com/kern-ai/kern/tree/main/cookbook/05_agent_os/interfaces/whatsapp)

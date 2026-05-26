@@ -1,0 +1,79 @@
+---
+title: Telegram
+---
+
+**TelegramTools** enable an Agent to send messages and media to Telegram chats using the Telegram Bot API. 9 tool methods cover text, photos, documents, video, audio, animations, stickers, editing, and deleting messages.
+
+## Prerequisites
+
+```shell
+uv pip install -U "kern-ai[telegram]"
+```
+
+```shell
+export TELEGRAM_TOKEN=***
+```
+
+## Example
+
+The following agent will send a message to a Telegram chat.
+
+```python cookbook/14_tools/telegram_tools.py
+from kern.agent import Agent
+from kern.tools.telegram import TelegramTools
+
+# How to get the token and chat_id:
+# 1. Create a new bot with BotFather on Telegram. https://core.telegram.org/bots/features#creating-a-new-bot
+# 2. Get the token from BotFather.
+# 3. Send a message to the bot.
+# 4. Get the chat_id by going to the URL:
+#    https://api.telegram.org/bot/<your-bot-token>/getUpdates
+
+telegram_token = "<enter-your-bot-token>"
+chat_id = "<enter-your-chat-id>"
+
+agent = Agent(
+    name="telegram",
+    tools=[TelegramTools(token=telegram_token, chat_id=chat_id)],
+)
+
+agent.print_response("Send message to telegram chat a paragraph about the moon")
+```
+
+## Toolkit Params
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `chat_id` | `Optional[str]` | `None` | Default chat ID. Falls back to `TELEGRAM_CHAT_ID` env var. |
+| `token` | `Optional[str]` | `None` | Bot token. Falls back to `TELEGRAM_TOKEN` env var. |
+| `enable_send_message` | `bool` | `True` | Enable `send_message` tool. |
+| `enable_send_photo` | `bool` | `False` | Enable `send_photo` tool. |
+| `enable_send_document` | `bool` | `False` | Enable `send_document` tool. |
+| `enable_send_video` | `bool` | `False` | Enable `send_video` tool. |
+| `enable_send_audio` | `bool` | `False` | Enable `send_audio` tool. |
+| `enable_send_animation` | `bool` | `False` | Enable `send_animation` tool (GIFs). |
+| `enable_send_sticker` | `bool` | `False` | Enable `send_sticker` tool. |
+| `enable_edit_message` | `bool` | `False` | Enable `edit_message` tool. |
+| `enable_delete_message` | `bool` | `False` | Enable `delete_message` tool. |
+| `all` | `bool` | `False` | Enable all tools. Overrides individual flags. |
+
+## Toolkit Functions
+
+| Function | Description |
+|----------|-------------|
+| `send_message` | Send a text message to a chat. |
+| `send_photo` | Send a photo (bytes) with optional caption. |
+| `send_document` | Send a document (bytes) with filename and optional caption. |
+| `send_video` | Send a video (bytes) with optional caption. |
+| `send_audio` | Send an audio file (bytes) with optional caption and title. |
+| `send_animation` | Send an animation/GIF (bytes) with optional caption. |
+| `send_sticker` | Send a sticker (bytes). |
+| `edit_message` | Edit a previously sent message by `message_id`. |
+| `delete_message` | Delete a message by `message_id`. |
+
+All methods return a JSON string with `{"status": "success", "message_id": ...}` on success or `{"status": "error", "message": ...}` on failure.
+
+## Developer Resources
+
+- View [Tools](https://github.com/kern-ai/kern/blob/main/libs/kern/kern/tools/telegram.py)
+- [Telegram interface docs](/agent-os/interfaces/telegram/introduction)

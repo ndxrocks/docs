@@ -1,0 +1,103 @@
+---
+title: Workflow Metrics
+sidebarTitle: Overview
+description: Workflow, step, and session metrics for token usage and performance.
+keywords: [metrics, workflow metrics, run metrics, session metrics]
+---
+
+Token usage, timing, and step breakdowns from workflow runs.
+
+```python
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIResponses
+from kern.team import Team
+from kern.tools.hackernews import HackerNewsTools
+from kern.tools.yfinance import YFinanceTools
+from kern.workflow import Step, Workflow
+from rich.pretty import pprint
+
+hackernews_agent = Agent(
+    name="HackerNews Agent",
+    model=OpenAIResponses(id="gpt-5.2"),
+    tools=[HackerNewsTools()],
+    role="Extract key insights from HackerNews posts",
+)
+
+finance_agent = Agent(
+    name="Finance Agent",
+    model=OpenAIResponses(id="gpt-5.2"),
+    tools=[YFinanceTools()],
+    role="Get stock prices and financial data",
+)
+
+research_team = Team(
+    name="Research Team",
+    members=[hackernews_agent, finance_agent],
+    instructions="Research tech topics from HackerNews and financial data",
+)
+
+content_planner = Agent(
+    name="Content Planner",
+    model=OpenAIResponses(id="gpt-5.2"),
+    instructions="Plan a content schedule based on research",
+)
+
+workflow = Workflow(
+    name="Content Creation Workflow",
+    db=SqliteDb(db_file="tmp/workflow.db"),
+    steps=[
+        Step(name="Research Step", team=research_team),
+        Step(name="Content Planning Step", agent=content_planner),
+    ],
+)
+
+response = workflow.run(input="AI trends in 2024")
+
+# Workflow metrics
+if response.metrics:
+    pprint(response.metrics.to_dict())
+
+# Step metrics
+if response.metrics:
+    for step_name, step_metrics in response.metrics.steps.items():
+        print(f"{step_name}: {step_metrics.executor_name} ({step_metrics.executor_type})")
+        if step_metrics.metrics:
+            print(f"  Duration: {step_metrics.metrics.duration:.2f}s, Tokens: {step_metrics.metrics.total_tokens}")
+
+# Session metrics
+pprint(workflow.get_session_metrics().to_dict())
+```
+
+Metrics are tracked at three levels:
+
+| Level | Type | Access |
+|-------|------|--------|
+| Workflow | `WorkflowMetrics` | `response.metrics` |
+| Per step | `RunMetrics` (via `StepMetrics`) | `response.metrics.steps["step_name"].metrics` |
+| Per session | `SessionMetrics` | `workflow.get_session_metrics()` |
+
+### Workflow fields (`WorkflowMetrics`)
+
+| Field | Description |
+|-------|-------------|
+| `duration` | Total workflow execution time in seconds (includes orchestration overhead). |
+| `steps` | Dictionary mapping step names to `StepMetrics`. |
+
+### Step fields (`StepMetrics`)
+
+| Field | Description |
+|-------|-------------|
+| `step_name` | Name of the step. |
+| `executor_type` | Type of executor (`"agent"`, `"team"`, or `"function"`). |
+| `executor_name` | Name of the executor. |
+| `metrics` | `RunMetrics` with tokens, duration, and model information. See [Metrics reference](/reference/run/metrics). |
+
+Session metrics aggregate step metrics (tokens, duration) across all runs. They include only agent/team execution time, not workflow orchestration overhead.
+
+## Developer Resources
+
+- [Workflow schema](/reference/workflows/workflow)
+- [Session schema](/reference/workflows/session)
+- [WorkflowRunOutput schema](/reference/workflows/run-output)
+- [Cookbook](https://github.com/kern-ai/kern/tree/main/cookbook/04_workflows/)

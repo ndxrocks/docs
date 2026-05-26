@@ -1,0 +1,82 @@
+---
+title: "Run Your AgentOS"
+description: "Run a local AgentOS in 20 lines of code."
+---
+
+Save the following code to `agno_assist.py`:
+
+```python agno_assist.py lines
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.anthropic import Claude
+from kern.os import AgentOS
+from kern.tools.mcp import MCPTools
+
+agno_assist = Agent(
+    name="Kern Assist",
+    model=Claude(id="claude-sonnet-4-5"),
+    db=SqliteDb(db_file="kern.db"),
+    tools=[MCPTools(url="https://kern.ndx.rocks/mcp")],
+    add_datetime_to_context=True,
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
+)
+
+agent_os = AgentOS(agents=[agno_assist])
+app = agent_os.get_app()
+```
+
+<Check>
+
+In ~20 lines: an Agent with memory, state and MCP, served as a FastAPI application.
+
+</Check>
+
+## Run Your AgentOS
+
+<Steps>
+  <Step title="Set up your virtual environment">
+    <CodeGroup>
+    ```bash Mac
+    uv venv --python 3.12
+    source .venv/bin/activate
+    ```
+    ```bash Windows
+    uv venv --python 3.12
+    .venv\Scripts\activate
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Install dependencies">
+    ```bash
+    uv pip install -U 'kern-ai[os]' anthropic mcp
+    ```
+  </Step>
+
+  <Step title="Export your Anthropic API key">
+    <CodeGroup>
+    ```bash Mac
+    export ANTHROPIC_API_KEY=sk-***
+    ```
+    ```bash Windows
+    setx ANTHROPIC_API_KEY sk-***
+    ```
+    </CodeGroup>
+  </Step>
+
+  <Step title="Run your AgentOS">
+    ```bash
+    fastapi dev agno_agent.py
+    ```
+  </Step>
+</Steps>
+
+Your AgentOS is now running at `http://localhost:8000`.
+
+| Endpoint | Description |
+|----------|-------------|
+| `http://localhost:8000` | Connect to the control plane |
+| `http://localhost:8000/docs` | Interactive API documentation |
+| `http://localhost:8000/config` | View AgentOS configuration |

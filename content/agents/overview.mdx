@@ -1,0 +1,54 @@
+---
+title: Meet the Agents 🤖
+description: "Agents are smart AI loops that use tools, remember context, and execute tasks—all optimized for local small models."
+mode: wide
+---
+
+Think of a standard LLM as a very smart, but slightly forgetful, static text predictor. You ask a question, it spits out an answer, and immediately forgets you exist. 
+
+A **Kern Agent** is like giving that LLM a brain, hands, and a memory! 🧠 It wraps a stateful control loop around a stateless model. Guide it with instructions, hand it some tools (like web search or database access), and watch it reason, call tools, and get things done in a neat loop. 
+
+Because Kern is designed for **small language models (1-7B parameters)**, our agents don't need giant, expensive cloud clusters. They run perfectly on your laptop using Ollama or llama.cpp. 💻
+
+## 🗺️ What can we build?
+
+<CardGroup cols={3}>
+  <Card
+    title="Build an Agent 🛠️"
+    icon="wrench"
+    iconType="duotone"
+    href="/agents/building-agents"
+  >
+    Learn how to spawn agents, wire up tools, and set rules.
+  </Card>
+  <Card
+    title="Run an Agent 🚀"
+    icon="user-robot"
+    iconType="duotone"
+    href="/agents/running-agents"
+  >
+    Execute agents, handle responses, and stream tokens.
+  </Card>
+  <Card
+    title="Debug an Agent 🐛"
+    icon="bug"
+    iconType="duotone"
+    href="/agents/debugging-agents"
+  >
+    Troubleshoot model reasoning and inspect execution paths.
+  </Card>
+</CardGroup>
+
+## 👥 Beyond Single Agents
+
+Sometimes, a single agent gets overwhelmed. Don't worry—Kern has abstractions to help them collaborate:
+
+| Abstraction | What it does |
+|-------------|--------------|
+| [**Team** 🤝](/teams/overview) | Group of specialized agents working together under a coordinator. |
+| [**Workflow** ⛓️](/workflows/overview) | A predictable, structured pipeline of steps (agents, teams, or functions). |
+
+## 📚 Resources & Next Steps
+
+- Want to see full code examples? Check out the [Agent Examples](/examples/agents/overview)!
+- Ready to look under the hood? Read the [Agent API Reference](/reference/agents/agent).

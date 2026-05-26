@@ -1,0 +1,297 @@
+---
+title: WhatsApp
+sidebarTitle: WhatsApp
+description: Deploy agents, teams, or workflows as WhatsApp bots via the WhatsApp Interface using Kern.
+keywords: [whatsapp, bot, interface, media, team, workflow, interactive, encryption, webhook]
+---
+
+The WhatsApp interface lets you deploy agents, teams, or workflows as WhatsApp bots that handle text, images, video, audio, and documents.
+
+## Setup
+
+Follow the [WhatsApp deploy guide](/deploy/interfaces/whatsapp/overview) to create a Meta App, configure the WhatsApp Business API, and set up webhooks.
+
+Required configuration:
+
+- `WHATSAPP_ACCESS_TOKEN` (from [Meta App Dashboard](https://developers.facebook.com/apps/) > WhatsApp > API Setup)
+- `WHATSAPP_PHONE_NUMBER_ID` (from WhatsApp > API Setup)
+- `WHATSAPP_VERIFY_TOKEN` (any string you choose for webhook verification)
+- Webhook URL set to `{prefix}/webhook` (use [ngrok](https://ngrok.com) for local development)
+
+## Example Usage
+
+<Tabs>
+  <Tab title="Agent">
+```python basic.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.openai import OpenAIChat
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+
+agent_db = SqliteDb(db_file="tmp/persistent_memory.db")
+
+basic_agent = Agent(
+    name="Basic Agent",
+    model=OpenAIChat(id="gpt-4o"),
+    db=agent_db,
+    add_history_to_context=True,
+    num_history_runs=3,
+    add_datetime_to_context=True,
+    markdown=True,
+)
+
+agent_os = AgentOS(
+    agents=[basic_agent],
+    interfaces=[Whatsapp(agent=basic_agent)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="basic:app", reload=True)
+```
+  </Tab>
+  <Tab title="Team">
+```python support_team.py
+from kern.agent import Agent
+from kern.db.sqlite import SqliteDb
+from kern.models.anthropic import Claude
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+from kern.team import Team
+from kern.tools.websearch import WebSearchTools
+
+model = Claude(id="claude-sonnet-4-6")
+team_db = SqliteDb(db_file="tmp/support_team.db")
+
+researcher = Agent(
+    name="Researcher",
+    role="Find accurate, up-to-date information on the web",
+    model=model,
+    tools=[WebSearchTools()],
+)
+
+writer = Agent(
+    name="Writer",
+    role="Turn research into clear, friendly WhatsApp replies",
+    model=model,
+)
+
+support_team = Team(
+    name="Support Team",
+    model=model,
+    members=[researcher, writer],
+    db=team_db,
+    add_history_to_context=True,
+    num_history_runs=3,
+    markdown=True,
+)
+
+agent_os = AgentOS(
+    teams=[support_team],
+    interfaces=[Whatsapp(team=support_team)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="support_team:app", reload=True)
+```
+  </Tab>
+  <Tab title="Workflow">
+```python multimodal_workflow.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.os.app import AgentOS
+from kern.os.interfaces.whatsapp import Whatsapp
+from kern.tools.websearch import WebSearchTools
+from kern.workflow import Parallel, Step, Workflow
+
+analyst = Agent(
+    name="Visual Analyst",
+    model=OpenAIChat(id="gpt-4o"),
+)
+
+researcher = Agent(
+    name="Web Researcher",
+    model=OpenAIChat(id="gpt-4o"),
+    tools=[WebSearchTools()],
+)
+
+creative_workflow = Workflow(
+    name="Creative Pipeline",
+    steps=[
+        Parallel(
+            Step(agent=analyst, name="Analyze"),
+            Step(agent=researcher, name="Research"),
+        ),
+    ],
+)
+
+agent_os = AgentOS(
+    workflows=[creative_workflow],
+    interfaces=[Whatsapp(workflow=creative_workflow)],
+)
+app = agent_os.get_app()
+
+if __name__ == "__main__":
+    agent_os.serve(app="multimodal_workflow:app", reload=True)
+```
+  </Tab>
+</Tabs>
+
+<Info>
+See [more examples](/agent-os/usage/interfaces/whatsapp/basic) including [media agents](/agent-os/usage/interfaces/whatsapp/agent-with-media), [image generation](/agent-os/usage/interfaces/whatsapp/image-generation-tools), [reasoning](/agent-os/usage/interfaces/whatsapp/reasoning-agent), and [multiple bots](/examples/agent-os/interfaces/whatsapp/multiple-instances).
+</Info>
+
+## Sessions
+
+Each WhatsApp user gets a single session scoped to their phone number.
+
+<Note>
+Session format: `wa:{entity_id}:{user_id}`. For example, an agent named "Basic Agent" talking to user +1234567890 produces `wa:Basic Agent:1234567890`.
+</Note>
+
+Users can send `/new` to start a fresh session. The old session is preserved in the database, and a new session ID is created with a random suffix. This requires a `db` on the agent, team, or workflow.
+
+## Media
+
+Users can send images, video, audio, and documents to the bot. Media is downloaded from Meta's servers and passed to the agent automatically. Agents can send media back in their responses.
+
+See the [media agent example](/agent-os/usage/interfaces/whatsapp/agent-with-media) for a complete multimodal agent, and the [reference page](/agent-os/interfaces/whatsapp/reference) for supported message types.
+
+## WhatsAppTools
+
+`WhatsAppTools` lets your agents send interactive messages: reply buttons, list menus, images, documents, locations, and reactions.
+
+```python
+from kern.tools.whatsapp import WhatsAppTools
+
+agent = Agent(
+    tools=[WhatsAppTools(
+        enable_send_reply_buttons=True,
+        enable_send_list_message=True,
+        enable_send_location=True,
+    )],
+)
+```
+
+See the [interactive concierge example](https://github.com/kern-ai/kern/blob/main/cookbook/05_agent_os/interfaces/whatsapp/interactive_concierge.py) for a full agent using all interactive features.
+
+For parameters and methods, see the [WhatsAppTools reference](/tools/toolkits/social/whatsapp).
+
+## Multi-Instance
+
+Run multiple bots on the same server with different `prefix` values:
+
+```python
+agent_os = AgentOS(
+    agents=[basic_agent, research_agent],
+    interfaces=[
+        Whatsapp(
+            agent=basic_agent,
+            prefix="/basic",
+            access_token=getenv("BASIC_WHATSAPP_ACCESS_TOKEN"),
+            phone_number_id=getenv("BASIC_WHATSAPP_PHONE_NUMBER_ID"),
+            verify_token=getenv("BASIC_WHATSAPP_VERIFY_TOKEN"),
+        ),
+        Whatsapp(
+            agent=research_agent,
+            prefix="/web-research",
+            access_token=getenv("RESEARCH_WHATSAPP_ACCESS_TOKEN"),
+            phone_number_id=getenv("RESEARCH_WHATSAPP_PHONE_NUMBER_ID"),
+            verify_token=getenv("RESEARCH_WHATSAPP_VERIFY_TOKEN"),
+        ),
+    ],
+)
+```
+
+Each instance gets its own route prefix, session namespace, and Meta App credentials.
+
+<Tip>
+Each Meta App can only have one webhook callback URL, so multi-instance setups require separate Meta Apps (one per bot), each with its own phone number.
+</Tip>
+
+## Phone Number Encryption
+
+<Info>
+Enable with `enable_encryption=True` to encrypt phone numbers before storing them as `user_id`. Raw numbers are never written to the database.
+</Info>
+
+```python
+Whatsapp(agent=my_agent, enable_encryption=True)
+# Set WHATSAPP_ENCRYPTION_KEY env var (64 hex chars = 32 bytes)
+```
+
+Phone numbers are encrypted with AES-256-GCM using a deterministic nonce, so the same phone always maps to the same `user_id`. Requires the `cryptography` package.
+
+## Security
+
+Every incoming webhook is verified using HMAC-SHA256 signature validation:
+
+1. The `X-Hub-Signature-256` header is extracted
+2. A signature is computed: `HMAC-SHA256(app_secret, request_body)`
+3. The computed signature is compared using constant-time comparison (`hmac.compare_digest`)
+
+<Warning>
+If `WHATSAPP_APP_SECRET` is not set, the server returns a 500 error unless `WHATSAPP_SKIP_SIGNATURE_VALIDATION=true` is set. Always configure the App Secret for production. Find it at **App Settings > Basic** in your [Meta App Dashboard](https://developers.facebook.com/apps/).
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="No messages received">
+    **Cause:** Webhook not configured or not subscribed to the `messages` field.
+
+    **Fix:** In your [Meta App Dashboard](https://developers.facebook.com/apps/), go to **WhatsApp > Configuration** and verify the callback URL matches your tunnel URL (e.g., `https://your-tunnel.ngrok.io/whatsapp/webhook`). Click "Manage" and confirm you're subscribed to the `messages` field.
+  </Accordion>
+
+  <Accordion title="403 on webhook">
+    **Cause:** Invalid App Secret or missing signature validation config.
+
+    **Fix:** Verify `WHATSAPP_APP_SECRET` matches the value under **App Settings > Basic** in your [Meta App Dashboard](https://developers.facebook.com/apps/). For local development, set `WHATSAPP_SKIP_SIGNATURE_VALIDATION=true`.
+  </Accordion>
+
+  <Accordion title="Webhook verification fails">
+    **Cause:** Verify token mismatch or server not running.
+
+    **Fix:** Ensure `WHATSAPP_VERIFY_TOKEN` matches the value you entered in the Meta webhook configuration. Your server must be running when you click "Verify and save".
+  </Accordion>
+
+  <Accordion title="Media not sending">
+    **Cause:** Expired or insufficient access token.
+
+    **Fix:** Temporary tokens expire after ~24 hours. For production, create a permanent [System User token](https://developers.facebook.com/docs/whatsapp/business-management-api/get-started#system-user-access-tokens) via Meta Business Manager. Ensure the token has `whatsapp_business_messaging` permission.
+  </Accordion>
+
+  <Accordion title="Bot not replying">
+    **Cause:** Missing environment variables or agent errors.
+
+    **Fix:** Check application logs. Common causes: `WHATSAPP_ACCESS_TOKEN` not set, expired token, or an error in your agent's tools or model configuration.
+  </Accordion>
+
+  <Accordion title="SSL certificate errors">
+    **Cause:** macOS system Python missing root certificates.
+
+    **Fix:** Set the `SSL_CERT_FILE` environment variable:
+    ```bash
+    export SSL_CERT_FILE=$(python3 -c "import certifi; print(certifi.where())")
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## Developer Resources
+
+<CardGroup cols={2}>
+  <Card title="Interface Reference" icon="book" href="/agent-os/interfaces/whatsapp/reference">
+    All parameters, endpoints, and session handling details.
+  </Card>
+  <Card title="Deploy Guide" icon="rocket" href="/deploy/interfaces/whatsapp/overview">
+    Create a Meta App, configure webhooks, and deploy step by step.
+  </Card>
+  <Card title="WhatsAppTools Reference" icon="wrench" href="/tools/toolkits/social/whatsapp">
+    Toolkit parameters and methods for interactive messages, media, and locations.
+  </Card>
+  <Card title="Usage Examples" icon="code" href="/agent-os/usage/interfaces/whatsapp/basic">
+    Agents, teams, media, image generation, reasoning, and more.
+  </Card>
+</CardGroup>

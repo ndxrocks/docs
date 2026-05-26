@@ -1,0 +1,62 @@
+---
+title: "Tool Call Metrics"
+description: "Track tool execution timing with ToolCallMetrics on each ToolExecution."
+---
+
+```python
+"""Tool execution timing: start_time, end_time, and duration on each ToolExecution."""
+
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.tools.yfinance import YFinanceTools
+from rich.pretty import pprint
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    tools=[YFinanceTools()],
+    markdown=True,
+)
+
+if __name__ == "__main__":
+    run_output = agent.run("What is the stock price of AAPL and NVDA?")
+
+    # Run-level metrics
+    print("=" * 50)
+    print("RUN METRICS")
+    print("=" * 50)
+    pprint(run_output.metrics)
+
+    # Each tool call carries its own timing metrics
+    print("=" * 50)
+    print("TOOL CALL METRICS")
+    print("=" * 50)
+    if run_output.tools:
+        for tool_call in run_output.tools:
+            print(f"Tool: {tool_call.tool_name}")
+            if tool_call.metrics:
+                pprint(tool_call.metrics)
+            print("-" * 40)
+
+    # Per-model breakdown
+    print("=" * 50)
+    print("MODEL DETAILS")
+    print("=" * 50)
+    if run_output.metrics and run_output.metrics.details:
+        for model_type, model_metrics_list in run_output.metrics.details.items():
+            print(f"\n{model_type}:")
+            for model_metric in model_metrics_list:
+                pprint(model_metric)
+```
+
+## Run the Example
+```bash
+# Clone and setup repo
+git clone https://github.com/kern-ai/kern.git
+cd kern/cookbook/02_agents/14_advanced
+
+# Create and activate virtual environment
+./scripts/demo_setup.sh
+source .venvs/demo/bin/activate
+
+python tool_call_metrics.py
+```

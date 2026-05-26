@@ -1,0 +1,120 @@
+---
+title: Predictable Pipelines: Workflows ⛓️
+sidebarTitle: Overview
+description: "Workflows keep small models on track by orchestrating agents, teams, and functions through strict execution steps."
+mode: wide
+---
+
+While a single agent is great for open-ended chatting or tool calling, small models (under 7B parameters) can sometimes drift off-topic during complex, multi-step tasks. 
+
+Enter **Workflows**! ⛓️ 
+
+A Workflow is a structured, step-by-step pipeline. Instead of letting the model guess the next step, you define exactly what runs and in what order. Steps can execute sequentially, in parallel, in loops, or based on conditional results. The output of one step flows cleanly into the next, ensuring reliable and repeatable results—even on local laptops.
+
+---
+
+## 🗺️ Visualizing Your Pipeline
+
+Kern features native **Mermaid flowchart visualization** for workflows! 📊 You can automatically map out your agent pipelines and watch the execution paths, inputs, and outputs update in real time.
+
+<img
+  className="block dark:hidden"
+  src="/images/workflows-flow-light.png"
+  alt="Workflows flow diagram"
+/>
+
+<img
+  className="hidden dark:block"
+  src="/images/workflows-flow.png"
+  alt="Workflows flow diagram"
+/>
+
+---
+
+## 🛠️ Your First Workflow
+
+Here's how to build a content creation pipeline where a researcher agent finds facts and a writer agent puts them together, running locally on Ollama:
+
+```python content_creation_workflow.py
+from kern.agent import Agent
+from kern.models.openai import OpenAIChat
+from kern.workflow import Workflow
+from kern.tools.hackernews import HackerNewsTools
+
+# 1. Spawn our researcher 🔍
+researcher = Agent(
+    name="Researcher",
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    instructions="Find the top three facts about the topic. Output only those facts.",
+    tools=[HackerNewsTools()]
+)
+
+# 2. Spawn our writer ✍️
+writer = Agent(
+    name="Writer",
+    model=OpenAIChat(id="llama3.2:3b", base_url="http://localhost:11434/v1"),
+    instructions="Write a punchy tweet summary based on the provided facts."
+)
+
+# 3. Chain them together! ⛓️
+content_workflow = Workflow(
+    name="Content Pipeline",
+    steps=[researcher, writer]
+)
+
+# Run the workflow
+content_workflow.print_response("Write a summary of AI chip startups", stream=True)
+```
+
+---
+
+## 🤔 When to Use Workflows?
+
+| Use a Workflow ⛓️ | Use a Team 🤝 |
+| :--- | :--- |
+| You need **predictable, repeatable** executions. | You need **dynamic collaboration** between agents. |
+| Steps are sequential with fixed inputs/outputs. | Agents must choose when and how to coordinate. |
+| Running local 1-7B models that need strict rails. | Running larger models capable of complex coordination. |
+| You want an audit trail of every stage. | You want conversational problem-solving. |
+
+---
+
+## 🧱 What can be a Step?
+
+You can wrap almost anything as a execution step in a workflow:
+
+- **Agent**: An AI agent running instructions and calling tools.
+- **Team**: A collaborative group of agents solving a sub-task.
+- **Python Function**: Good old-fashioned code for math, data cleaning, or database saves.
+- **Nested Workflow**: Chain workflows inside other workflows for complex modularity.
+
+---
+
+## 📚 Guides & Resources
+
+<CardGroup cols={3}>
+  <Card
+    title="Build Workflows 🛠️"
+    icon="wrench"
+    iconType="duotone"
+    href="/workflows/building-workflows"
+  >
+    Define custom pipelines, inputs, and outputs.
+  </Card>
+  <Card
+    title="Run Workflows 🚀"
+    icon="user-robot"
+    iconType="duotone"
+    href="/workflows/running-workflows"
+  >
+    Execute workflows, stream outputs, and check metrics.
+  </Card>
+  <Card
+    title="Interactive Chat 💬"
+    icon="comments"
+    iconType="duotone"
+    href="/workflows/conversational-workflows"
+  >
+    Run workflows inside conversational chat interfaces.
+  </Card>
+</CardGroup>

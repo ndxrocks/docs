@@ -1,0 +1,133 @@
+---
+title: Models
+sidebarTitle: Overview
+description: A Model in Kern wraps any LLM provider into a uniform interface.
+---
+
+A Model in Kern wraps any LLM provider into a uniform interface. Pass it to an Agent and switch providers without changing your application code. 
+
+Kern is heavily optimized for **small language models (1-7B parameters)** that run locally on your own hardware for zero cost, full privacy, and low latency.
+
+---
+
+## Why small models?
+
+Models under 7 billion parameters (like Llama 3.2 3B or Phi-4 Mini) run efficiently on consumer laptops and cost nothing to operate. They are highly capable at structured extraction, classification, summarization, and basic tool use. 
+
+Kern's **template-based structured output**, **JSON repair**, and **prompt tuning** are specifically designed to maximize the reliability of these resource-constrained models.
+
+---
+
+## The Model Concept
+
+Every model in Kern is a Python class that wraps a specific LLM provider's API. Regardless of the provider, the model object exposes the same methods, making your agent code fully portable:
+
+```python
+from kern.models.openai import OpenAIChat
+from kern import Agent
+
+# Define the model — e.g. pointing to a local model server
+model = OpenAIChat(
+    id="local-model",
+    base_url="http://localhost:8080/v1",
+    temperature=0.3,
+)
+
+agent = Agent(
+    model=model,
+    description="You are a helpful assistant.",
+)
+
+result = agent.run("Explain transformers in one sentence")
+print(result.content)
+```
+
+---
+
+## Supported Providers
+
+### Local Models (Recommended)
+
+Run models on your own hardware for full privacy and zero API costs. Any OpenAI-compatible endpoint works out of the box:
+
+<CardGroup cols={2}>
+  <Card title="Ollama" icon="laptop">
+    Install Ollama, pull a model (`ollama pull llama3.2:3b`), and import `Ollama` or connect via `OpenAIChat`.
+  </Card>
+  <Card title="llama.cpp / vLLM / LM Studio" icon="server">
+    Connect to any local OpenAI-compatible endpoint by setting `base_url`.
+  </Card>
+</CardGroup>
+
+```python
+# Ollama example
+from kern.models.ollama import Ollama
+model = Ollama(id="llama3.2:3b")
+
+# OpenAI-Compatible local server (llama.cpp)
+from kern.models.openai import OpenAIChat
+model = OpenAIChat(
+    id="local-model",
+    base_url="http://localhost:8080/v1",
+)
+```
+
+### Cloud Providers
+
+Kern also supports cloud-based model providers when you need models larger than 7B:
+
+- **OpenAI** (e.g. `gpt-4o-mini` — best-in-class small cloud model)
+- **Anthropic** (e.g. `claude-3-5-sonnet`)
+- **Google** (e.g. `gemini-2.0-flash`)
+- **Groq** / **Together AI** / **Fireworks AI** (High throughput cloud endpoints for open-source models)
+
+---
+
+## Recommended Models
+
+| Model | ID | Parameters | Best For |
+| :--- | :--- | :--- | :--- |
+| **Llama 3.2 3B** | `llama3.2:3b` | 3B | General purpose local tasks |
+| **Phi-4 Mini** | `phi4-mini` | 3.8B | Reasoning-heavy tasks, local coding |
+| **Llama 3.2 1B** | `llama3.2:1b` | 1B | Ultra-fast local classification / extraction |
+| **GPT-4o Mini** | `gpt-4o-mini` | ~8B | Cloud primary, tool use, and structured outputs |
+
+---
+
+## Model Shorthand (String Syntax)
+
+For quick prototyping, you can pass a model identifier string directly to the agent instead of importing the model class:
+
+```python
+from kern import Agent
+
+# Kern automatically infers the model provider from the string format
+agent = Agent(
+    model="gpt-4o-mini",
+    description="You are a helpful assistant."
+)
+
+# Explicit provider shorthand
+agent_ollama = Agent(model="ollama:llama3.2:3b")
+agent_together = Agent(model="together:meta-llama/Llama-3.2-3B-Instruct-Turbo")
+```
+
+---
+
+## Fallback Models (Resilience)
+
+If your primary model fails due to rate limits or outages, Kern can automatically failover to secondary models:
+
+```python
+from kern import Agent
+from kern.models.openai import OpenAIChat
+from kern.models.ollama import Ollama
+
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o-mini"),
+    fallback_models=[
+        Ollama(id="llama3.2:3b"),  # Fallback to local model if OpenAI fails
+    ],
+    description="You are a resilient assistant.",
+)
+```
