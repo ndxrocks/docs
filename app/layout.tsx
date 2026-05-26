@@ -12,6 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://kern.ndx.rocks"),
   title: "Kern — Small Models. Big Impact.",
   description:
     "An agent framework built for 1-7B parameter LLMs. Fork of Agno, optimized for small models with template-based structured output, JSON repair, and workflow visualization.",
