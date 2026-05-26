@@ -2,6 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { CodeBlock } from "@/components/docs/code-block";
+import { Mermaid } from "./mermaid";
 
 export function CardGroup({ children, cols = 2 }: { children: React.ReactNode; cols?: number }) {
   const gridCols = cols === 3 ? "md:grid-cols-3" : cols === 4 ? "md:grid-cols-4" : "md:grid-cols-2";
@@ -121,6 +122,11 @@ export function Pre({ children }: { children: React.ReactNode }) {
       const match = /language-(\w+)/.exec(className);
       const language = match ? match[1] : "python";
       const code = typeof codeContent === "string" ? codeContent : "";
+      
+      if (language === "mermaid") {
+        return <Mermaid chart={code.trim()} />;
+      }
+      
       return <CodeBlock code={code.trim()} language={language} className="my-6" />;
     }
   }

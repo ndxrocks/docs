@@ -19,17 +19,17 @@ A Team coordinates multiple specialized agents (and sub-teams) to tackle complex
 
 Here's how a team divides labor under a leader:
 
-<img
-  className="block dark:hidden"
-  src="/images/teams/team-structure-light.png"
-  alt="Team structure"
-/>
+```mermaid
+graph TD
+    Leader[👑 Team Leader Agent] --> English[🇬🇧 English Agent]
+    Leader --> Chinese[🇨🇳 Chinese Agent]
+    Leader --> German[🇩🇪 German Agent]
 
-<img
-  className="hidden dark:block"
-  src="/images/teams/team-structure-dark.png"
-  alt="Team structure"
-/>
+    style Leader fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ffffff
+    style English fill:#0f172a,stroke:#a855f7,stroke-width:2px,color:#ffffff
+    style Chinese fill:#0f172a,stroke:#a855f7,stroke-width:2px,color:#ffffff
+    style German fill:#0f172a,stroke:#a855f7,stroke-width:2px,color:#ffffff
+```
 
 ---
 

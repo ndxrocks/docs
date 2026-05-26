@@ -17,17 +17,17 @@ A Workflow is a structured, step-by-step pipeline. Instead of letting the model 
 
 Kern features native **Mermaid flowchart visualization** for workflows! 📊 You can automatically map out your agent pipelines and watch the execution paths, inputs, and outputs update in real time.
 
-<img
-  className="block dark:hidden"
-  src="/images/workflows-flow-light.png"
-  alt="Workflows flow diagram"
-/>
+```mermaid
+graph LR
+    Input([User Query]) --> Researcher[🔍 Researcher Agent]
+    Researcher --> Writer[✍️ Writer Agent]
+    Writer --> Output([Final Article])
 
-<img
-  className="hidden dark:block"
-  src="/images/workflows-flow.png"
-  alt="Workflows flow diagram"
-/>
+    style Input fill:#1e1b4b,stroke:#818cf8,stroke-width:2px,color:#ffffff
+    style Researcher fill:#0f172a,stroke:#f97316,stroke-width:2px,color:#ffffff
+    style Writer fill:#0f172a,stroke:#a855f7,stroke-width:2px,color:#ffffff
+    style Output fill:#14532d,stroke:#22c55e,stroke-width:2px,color:#ffffff
+```
 
 ---
 
